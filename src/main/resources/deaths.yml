@@ -1,0 +1,19 @@
+# SimpleEssentials Deaths Configuration
+# This file stores all player death records
+# 
+# Structure:
+# deaths:
+#   <player_uuid>:
+#     <death_id>:
+#       timestamp: <unix_timestamp>
+#       world: "world_name"
+#       x: <x_coordinate>
+#       y: <y_coordinate>
+#       z: <z_coordinate>
+#       death_reason: "death_message"
+#       gamemode: "SURVIVAL/CREATIVE/ADVENTURE/SPECTATOR"
+#       server: "server_name"
+#       xp_level: <level>
+#       dimension: "NORMAL/NETHER/END"
+
+deaths: {}

@@ -1,0 +1,14 @@
+# Warp System Configuration
+# This file stores all warp points created by players
+
+warps:
+  # Example warp structure:
+  # spawn:
+  #   world: "world"
+  #   x: 0.5
+  #   y: 64.0
+  #   z: 0.5
+  #   yaw: 0.0
+  #   pitch: 0.0
+  #   created_by: "PlayerName"
+  #   created_at: 1234567890123

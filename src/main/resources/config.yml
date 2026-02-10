@@ -1,0 +1,316 @@
+# SimpleEssentials Configuration File
+
+# ServerList Settings
+serverlist:
+  # MOTD (Message of the Day) - Two lines displayed in server list
+  motd:
+    line1: "&6Welcome to our Server!"
+    line2: "&7A Minecraft Server &8| &fVersion 1.21.4"
+  
+  # Maximum players displayed in server list (overrides real max players)
+  max_players: 200
+  
+  # Fake player count settings
+  fake_players:
+    enabled: true  # Set to true to override real online player count
+    mode: "range"  # "static" or "range"
+    
+    # Static mode settings
+    static_count: 15  # Fixed number of online players to show
+    
+    # Range mode settings (used when mode is "range")
+    range:
+      min: 150  # Minimum fake players
+      max: 185  # Maximum fake players
+    
+    # Dynamic refresh settings
+    dynamic_refresh:
+      enabled: true  # Set to true to automatically refresh fake player count
+      interval_ticks: 20  # Refresh interval in ticks (20 ticks = 1 second). 6000 ticks = 5 minutes
+
+# Messages
+messages:
+  prefix: "&6[SimpleEssentials] "
+  no_permission: "&cYou don't have permission to use this command!"
+  player_not_found: "&cPlayer not found!"
+  gamemode:
+    set: "&aYour gamemode has been set to {gamemode}"
+    set_other: "&aSet {player}'s gamemode to {gamemode}"
+    invalid: "&cInvalid gamemode! Use: survival, creative, adventure, or spectator"
+  fly:
+    enabled: "&aFlight enabled!"
+    disabled: "&cFlight disabled!"
+    toggled_other: "&aToggled flight for {player}"
+  heal:
+    healed: "&aYou have been healed!"
+    healed_other: "&aHealed {player}"
+  godmode:
+    enabled: "&aGod mode enabled!"
+    disabled: "&cGod mode disabled!"
+    toggled_other: "&aGod mode {status} for {player}"
+  uuid:
+    result: "&a{player}'s UUID: &f{uuid}"
+    never_joined: "&c{player} has never joined the server!"
+  userinfo:
+    never_joined: "&c{player} has never joined the server!"
+    header: "&6=== User Info: &f{player} &6==="
+    footer: "&6======================"
+  vanish:
+    player_only: "&cThis command can only be used by players!"
+    vanished: "&aYou are now vanished! You are invisible to other players and mobs."
+    unvanished: "&aYou are now visible to other players and mobs."
+    auto_vanished: "&aYou have automatically joined vanished! No one can see you."
+    autovanish_enabled: "&aAuto-vanish enabled! You will join vanished on your next login."
+    autovanish_disabled: "&cAuto-vanish disabled! You will join normally on your next login."
+    autovanish_no_permission: "&cYou don't have permission to use auto-vanish!"
+    username: "&7Username: &f{player}"
+    uuid: "&7UUID: &f{uuid}"
+    status_online: "&7Status: &aOnline"
+    status_offline: "&7Status: &cOffline"
+    ip_address: "&7IP Address: &f{ip}"
+    host_name: "&7Host Name: &f{host}"
+    ping: "&7Ping: &f{ping}ms"
+    server: "&7Server: &f{server}"
+    world: "&7World: &f{world}"
+    coordinates: "&7Coordinates: &f{x}, {y}, {z}"
+    health: "&7Health: &f{health}/20.0"
+    saturation: "&7Saturation: &f{saturation}"
+    xp_level: "&7XP Level: &f{xp}"
+    client: "&7Client: &f{client}"
+    last_seen: "&7Last Seen: &f{date}"
+    actions:
+      header: "&6=== Actions ==="
+      banlog: "&7[&6Banlog&7] &f({count} entries) &7- Click to view"
+      invsee: "&7[&6InvSee&7] &7- Click to open inventory"
+      teleport: "&7[&6Teleport&7] &7- Click to teleport to &f{x}, {y}, {z}"
+  warp:
+    player_only: "&cThis command can only be used by players!"
+    set:
+      name_empty: "&cWarp name cannot be empty!"
+      name_too_long: "&cWarp name cannot be longer than 20 characters!"
+      invalid_characters: "&cWarp name cannot contain spaces, dots, or slashes!"
+      already_exists: "&cWarp '{warp}' already exists!"
+      success: "&aWarp '{warp}' created at {world} ({x}, {y}, {z})!"
+    delete:
+      not_found: "&cWarp '{warp}' not found!"
+      success: "&aWarp '{warp}' has been deleted!"
+    not_found: "&cWarp '{warp}' not found!"
+    no_permission: "&cYou don't have permission to use warp '{warp}'!"
+    world_not_found: "&cWorld '{world}' not found!"
+    teleport:
+      success: "&aTeleported to warp '{warp}' in {world} ({x}, {y}, {z})!"
+    list:
+      header: "&6=== Available Warps ==="
+      empty: "&7No warps have been created yet!"
+      no_access: "&7You don't have access to any warps!"
+      entry: "&7- &f{warp} &7({world}) &8- Created by {creator}"
+      footer: "&6=== {count} warps available ==="
+  namehistory:
+    header: "&6=== &eName History for {player} &6==="
+    never_joined: "&c{player} has never joined the server!"
+  firstjoin:
+    result: "&a{player} first joined on &e{date}"
+    unknown: "&cUnable to determine {player}'s first join date"
+    never_joined: "&c{player} has never joined the server!"
+  lastjoin:
+    result: "&a{player} last joined on &e{date}"
+    unknown: "&cUnable to determine {player}'s last join date"
+    never_joined: "&c{player} has never joined the server!"
+  chat:
+    muted: "&cYou are muted and cannot chat!"
+  invsee:
+    player_only: "&cThis command can only be used by players!"
+    cannot_view: "&cYou cannot view {player}'s inventory!"
+    opened_online: "&aOpened {player}'s inventory"
+    opened_offline: "&aOpened {player}'s inventory (read-only)"
+    note_online: "&7Note: Changes are saved automatically when you close the inventory"
+    note_offline: "&7Offline player inventories are read-only"
+    changes_saved: "&aChanges saved to {player}'s inventory"
+    offline_limitation: "&cOffline inventory viewing requires additional setup."
+    offline_tip1: "&7Currently only online players can be viewed."
+    offline_tip2: "&7Tip: Use this command when the player is online."
+    offline_info: "&cOffline Player"
+    offline_lore:
+      - "&7This player is currently offline"
+      - "&7Inventory viewing for offline players"
+      - "&7requires additional data loading"
+      - "&7Please try again when they're online"
+    error_loading: "&cError loading offline inventory data"
+    error_saving: "&cError saving inventory changes"
+    error_try_online: "&7Please try again when the player is online"
+  repair:
+    player_only: "&cThis command can only be used by players!"
+    no_permission: "&cYou don't have permission to use repair!"
+    no_others_permission: "&cYou don't have permission to repair other players' items!"
+    console_need_target: "&cConsole must specify a player to repair!"
+    usage: "&cUsage: /repair [all|inventory|hand] [player]"
+    no_item_in_hand: "&cYou must hold an item in your hand to repair!"
+    item_not_repairable: "&cThis item cannot be repaired!"
+    no_repairable_items: "&cYou have no repairable items in your inventory!"
+    inventory_success: "&7Repaired &e{count}&7 items in your inventory!"
+    inventory_success_other: "&7Repaired &e{count}&7 items in &e{player}&7's inventory!"
+    inventory_notified: "&7Your inventory items (&e{count}&7) were repaired by &e{sender}&7!"
+    hand_success: "&7Repaired your &e{item}&7!"
+    hand_success_other: "&7Repaired &e{item}&7 in &e{player}&7's hand!"
+    hand_notified: "&7Your &e{item}&7 was repaired by &e{sender}&7!"
+  autobroadcast:
+    enabled: false
+    interval: 9000  # In ticks (20 ticks = 1 second). 9000 ticks = 15 minutes
+    mode: "sequential"  # "sequential" or "random"
+    sound: "BLOCK_NOTE_BLOCK_PLING"  # Sound to play when broadcasting (empty to disable)
+    sound_volume: 1.0  # Sound volume (0.0 to 1.0)
+    sound_pitch: 1.0   # Sound pitch (0.5 to 2.0)
+    messages:
+      - "&6=== Server Announcement ===\n&7Welcome to our server! &e{online}&7/&e{max_players}&7 players online.\n&7Need help? Use &e/help&7 for commands."
+      - "&6=== Server Rules ===\n&aRemember to read our rules at &f/rules&a!\n&7Current time: &e{hour}:{minute}&7 on &e{day}/{month}/{year}"
+  homes:
+    default_limit: 5
+    player_only: "&cThis command can only be used by players!"
+    invalid_name: "&cHome name cannot be empty!"
+    limit_reached: "&cYou have reached your home limit of &e{limit}&c homes!"
+    set_success: "&aHome '&e{name}&a' has been set!"
+    not_found: "&cHome '&e{name}&c' not found!"
+    world_not_found: "&cThe world '&e{world}&c' for this home no longer exists!"
+    teleport_success: "&aTeleported to home '&e{name}&a'!"
+    no_homes: "&cYou have no homes set. Use &e/sethome <name>&c to create one!"
+    list_header: "&6=== Your Homes (&e{count}&6/&e{limit}&6) ==="
+    list_entry: "&7- &e{name}&7 in &f{world} &7(&f{x}, {y}, {z}&7) - Created: &e{date}"
+    click_tooltip: "&7Click to teleport to &e{name}&7!"
+    list_footer: "&6======================"
+    delete_success: "&aHome '&e{name}&a' has been deleted!"
+  deathlog:
+    player_only: "&cThis command can only be used by players!"
+    player_not_found: "&cPlayer '{player}' not found!"
+    no_deaths: "&c{player} has no recorded deaths."
+    gui_title: "Death Log - '{player}'"
+    skull_name: "&e{time}"
+    lore_world: "&7World: &f{world}"
+    lore_coordinates: "&7Location: &f{x}, {y}, {z}"
+    lore_reason: "&7Death Reason: &f{reason}"
+    lore_gamemode: "&7Gamemode: &f{gamemode}"
+    lore_server: "&7Server: &f{server}"
+    lore_xp: "&7XP Level: &f{level}"
+    lore_dimension: "&7Dimension: &f{dimension}"
+    prev_page: "&cPrevious Page"
+    next_page: "&aNext Page"
+    info_title: "&6Death Log Info"
+    info_page: "&7Page: &e{current}&7/&e{total}"
+    info_total: "&7Total Deaths: &e{count}"
+    inventory_title: "Death Inventory - {player} ({id})"
+    inventory_not_found: "&cDeath inventory not found!"
+  spawn:
+    player_only: "&cThis command can only be used by players!"
+    not_set: "&cSpawn has not been set yet!"
+    setspawn_hint: "&7Use &e/setspawn &7to set the server spawn location."
+    teleported: "&aTeleported to spawn in {world} &7({x}, {y}, {z})"
+    set_success: "&aSpawn set successfully in {world} &7({x}, {y}, {z}) &8| Yaw: {yaw} Pitch: {pitch}"
+    set_broadcast: "&6{player} has set the spawn location in {world}"
+    join_teleport: "&aWelcome! You have been teleported to the spawn."
+  simplecommands:
+    player_only: "&cThis command can only be used by players!"
+    workbench_title: "&6Workbench"
+    workbench_opened: "&aWorkbench opened!"
+    furnace_title: "&6Furnace"
+    furnace_opened: "&aFurnace opened!"
+    anvil_title: "&6Anvil"
+    anvil_opened: "&aAnvil opened!"
+    enchant_title: "&6Enchanting Table"
+    enchant_opened: "&aEnchanting table opened!"
+    brew_title: "&6Brewing Stand"
+    brew_opened: "&aBrewing stand opened!"
+    smith_title: "&6Smithing Table"
+    smith_opened: "&aSmithing table opened!"
+    grind_title: "&6Grindstone"
+    grind_opened: "&aGrindstone opened!"
+    stonecutter_title: "&6Stonecutter"
+    stonecutter_opened: "&aStonecutter opened!"
+    cartography_title: "&6Cartography Table"
+    cartography_opened: "&aCartography table opened!"
+    loom_title: "&6Loom"
+    loom_opened: "&aLoom opened!"
+    enderchest_opened: "&aOpened your enderchest!"
+  enderchest:
+    player_only: "&cThis command can only be used by players!"
+    invalid_id: "&cInvalid enderchest ID: {id}. Valid IDs: 1-{max}"
+    no_permission: "&cYou don't have permission to access enderchest {id}"
+    title: "&6EnderChest {id} - {player}"
+    opened: "&aOpened enderchest {id} &7({slots} slots)"
+  kick:
+    default_reason: "No reason provided"
+    screen: "&cYou have been kicked!\n&7Reason: &f{reason}\n&7Kicked by: &f{sender}"
+    confirmation: "&aSuccessfully kicked {player} for: &f{reason}"
+    broadcast: "&c{player} was kicked by {sender} for: &f{reason}"
+    not_online: "&c{player} is not online!"
+  ban:
+    default_reason: "Banned"
+    screen: "&cYou have been banned!\n&7Reason: &f{reason}\n&7Duration: &f{duration}\n&7Banned by: &f{sender}"
+    confirmation: "&aSuccessfully banned {player} for: &f{reason} &7({duration})"
+    broadcast: "&c{player} was banned by {sender} for: &f{reason} &7({duration})"
+    invalid_duration: "&cInvalid duration format! Use: 10s, 5m, 2h, 1d"
+  mute:
+    default_reason: "Muted"
+    confirmation: "&aSuccessfully muted {player} for: &f{reason} &7({time})"
+    already_muted: "&c{player} is already muted!"
+    target_permanent: "&cYou have been muted permanently!\n&7Reason: &f{reason}\n&7Muted by: &f{sender}"
+    target_with_time: "&cYou have been muted for {time}!\n&7Reason: &f{reason}\n&7Muted by: &f{sender}"
+    expired: "&aYour mute has expired!"
+    invalid_time: "&cInvalid time format! Use: 10s, 5m, 2h, 1d"
+  banlist:
+    header: "&6=== &eActive Bans & Mutes &6==="
+    bans_header: "&cActive Bans:"
+    no_bans: "&7No active bans"
+    ban_entry: "&8» &c{player} &7- &f{reason} &7({duration}) &8- &7by {source}"
+    mutes_header: "&eActive Mutes:"
+    no_mutes: "&7No active mutes"
+    mute_entry: "&8» &e{player}"
+  banlog:
+    header: "&6=== &eModeration History for {player} &6==="
+    no_history: "&7No moderation history found for {player}"
+    entry: "&8[{date}] &7{type} &8- &f{reason} &8- &7by {executor}"
+    clear_usage: "&cUsage: /banlog <player> clear"
+    cleared: "&a{player}'s moderation history has been cleared by {sender}"
+  unban:
+    default_reason: "Unbanned"
+    confirmation: "&aSuccessfully unbanned {player} for: &f{reason}"
+    not_banned: "&c{player} is not banned!"
+    broadcast: "&a{player} was unbanned by {sender} for: &f{reason}"
+  unmute:
+    default_reason: "Unmuted"
+    confirmation: "&aSuccessfully unmuted {player} for: &f{reason}"
+    not_muted: "&c{player} is not muted!"
+    target: "&aYou have been unmuted!\n&7Reason: &f{reason}\n&7Unmuted by: &f{sender}"
+    broadcast: "&a{player} was unmuted by {sender} for: &f{reason}"
+
+settings:
+  debug: true
+
+# Spawn Settings
+spawn:
+  enforce-spawn-on-join: false
+  broadcast_setspawn: true
+  send_message_on_teleport: true
+  location:
+    world: "world"
+    x: 0.0
+    y: 64.0
+    z: 0.0
+    yaw: 0.0
+    pitch: 0.0
+
+# EnderChest Settings
+enderchest:
+  max_ids: 5
+  default_slots: 27
+  slots_per_id:
+    "1": 27
+    "2": 27
+    "3": 36
+    "4": 45
+    "5": 54
+
+# Moderation settings
+moderation:
+  broadcast_kicks: true
+  broadcast_bans: true
+  broadcast_unbans: true
+  broadcast_unmutes: true

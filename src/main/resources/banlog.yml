@@ -1,0 +1,8 @@
+# SimpleEssentials Banlog Storage
+# This file stores moderation history for all players
+
+# Format: players.<uuid>.entries
+# Each entry is formatted as: type:reason:executor:timestamp
+# Types: KICK, BAN, TEMPBAN, MUTE, UNMUTE, UNBAN, BANLOG_CLEAR
+
+players: {}

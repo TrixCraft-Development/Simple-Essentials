@@ -1,0 +1,10 @@
+# AutoVanish Configuration File
+# This file stores which players have auto-vanish enabled
+# Format: autovanish.<player_uuid>: true/false
+
+autovanish:
+  # Example entries:
+  # 12345678-1234-1234-1234-123456789abc: true
+  # 87654321-4321-4321-4321-cba987654321: false
+  
+  # Players will be added here automatically when they enable/disable auto-vanish

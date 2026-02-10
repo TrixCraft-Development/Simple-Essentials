@@ -1,0 +1,16 @@
+# SimpleEssentials Homes Configuration
+# This file stores all player homes data
+# 
+# Structure:
+# homes:
+#   <player_uuid>:
+#     <home_name>:
+#       world: "world_name"
+#       x: <x_coordinate>
+#       y: <y_coordinate>
+#       z: <z_coordinate>
+#       yaw: <yaw_angle>
+#       pitch: <pitch_angle>
+#       created: <timestamp>
+
+homes: {}
