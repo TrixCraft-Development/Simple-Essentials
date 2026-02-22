@@ -39,7 +39,6 @@ public class ServerListModule implements Listener {
             if (faviconFile.exists()) {
                 BufferedImage image = ImageIO.read(faviconFile);
                 if (image != null) {
-                    // Ensure image is 64x64 pixels
                     if (image.getWidth() != 64 || image.getHeight() != 64) {
                         BufferedImage resized = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
                         Graphics2D g = resized.createGraphics();
@@ -59,7 +58,6 @@ public class ServerListModule implements Listener {
             }
         } catch (IOException e) {
             plugin.getLogger().warning("Could not load custom server icon: " + e.getMessage());
-            // Create a default icon
             createDefaultIcon();
         } catch (Exception e) {
             plugin.getLogger().warning("Unexpected error loading server icon: " + e.getMessage());
@@ -74,13 +72,11 @@ public class ServerListModule implements Listener {
         try {
             BufferedImage image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = image.createGraphics();
-            
-            // Create a simple gradient background
+
             GradientPaint gradient = new GradientPaint(0, 0, new Color(0, 100, 200), 64, 64, new Color(0, 50, 100));
             g.setPaint(gradient);
             g.fillRect(0, 0, 64, 64);
-            
-            // Add a simple text or symbol
+
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 24));
             FontMetrics fm = g.getFontMetrics();
@@ -179,31 +175,20 @@ public class ServerListModule implements Listener {
         
         // Set online players (fake or real)
         if (plugin.getConfig().getBoolean("serverlist.fake_players.enabled", false)) {
-            // Try to set fake player count using reflection if the method doesn't exist
             try {
                 event.getClass().getMethod("setNumPlayers", int.class).invoke(event, currentOnlineCount);
             } catch (Exception e) {
-                // Method doesn't exist, use alternative approach
                 plugin.getLogger().warning("setNumPlayers method not available, using reflection failed: " + e.getMessage());
-                // As fallback, we'll just log the intended count
                 plugin.debug("Intended fake player count: " + currentOnlineCount);
             }
         }
-        
-        // Set custom favicon if available
+
         if (customFavicon != null) {
             event.setServerIcon(customFavicon);
         }
         
         plugin.debug("ServerList ping handled - MOTD: " + fullMotd.replace("\n", " | ") + 
                     ", Online: " + event.getNumPlayers() + "/" + event.getMaxPlayers());
-    }
-    
-    /**
-     * Gets the current fake online count
-     */
-    public int getCurrentOnlineCount() {
-        return currentOnlineCount;
     }
     
     /**

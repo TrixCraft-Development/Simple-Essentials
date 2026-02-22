@@ -73,40 +73,40 @@ public class InvseeListener implements Listener {
             }
         }
         
-        // Save armor slots (slots 36-39 in our custom inventory)
-        // Helmet -> slot 36
-        ItemStack helmet = viewInventory.getItem(36);
+        // Save armor slots (slots 45-49 in our custom inventory)
+        // Helmet -> slot 45
+        ItemStack helmet = viewInventory.getItem(45);
         if (helmet != null && helmet.getType() != org.bukkit.Material.AIR) {
             targetInv.setHelmet(helmet.clone());
         } else {
             targetInv.setHelmet(null);
         }
         
-        // Chestplate -> slot 37
-        ItemStack chestplate = viewInventory.getItem(37);
+        // Chestplate -> slot 46
+        ItemStack chestplate = viewInventory.getItem(46);
         if (chestplate != null && chestplate.getType() != org.bukkit.Material.AIR) {
             targetInv.setChestplate(chestplate.clone());
         } else {
             targetInv.setChestplate(null);
         }
         
-        // Leggings -> slot 38
-        ItemStack leggings = viewInventory.getItem(38);
+        // Leggings -> slot 47
+        ItemStack leggings = viewInventory.getItem(47);
         if (leggings != null && leggings.getType() != org.bukkit.Material.AIR) {
             targetInv.setLeggings(leggings.clone());
         } else {
             targetInv.setLeggings(null);
         }
         
-        // Boots -> slot 39
-        ItemStack boots = viewInventory.getItem(39);
+        // Boots -> slot 48
+        ItemStack boots = viewInventory.getItem(48);
         if (boots != null && boots.getType() != org.bukkit.Material.AIR) {
             targetInv.setBoots(boots.clone());
         } else {
             targetInv.setBoots(null);
         }
         
-        // Off-hand -> slot 40
+        // Off-hand -> slot 49
         ItemStack offHand = viewInventory.getItem(40);
         if (offHand != null && offHand.getType() != org.bukkit.Material.AIR) {
             targetInv.setItemInOffHand(offHand.clone());

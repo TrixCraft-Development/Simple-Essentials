@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.OfflinePlayer;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.text.SimpleDateFormat;
 
 public class ModerationCommands {
@@ -19,9 +18,9 @@ public class ModerationCommands {
     private final BanlogManager banlogManager;
     private static final Set<UUID> mutedPlayers = new HashSet<>();
     
-    public ModerationCommands(SimpleEssentials plugin) {
+    public ModerationCommands(SimpleEssentials plugin, BanlogManager banlogManager) {
         this.plugin = plugin;
-        this.banlogManager = new BanlogManager(plugin);
+        this.banlogManager = banlogManager;
     }
     
     public void registerModerationCommands() {
@@ -33,7 +32,6 @@ public class ModerationCommands {
         // Kick Command with reason
         new CommandAPICommand("kick")
                 .withArguments(new StringArgument("player").replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    // Return online players for tab completion
                     return Bukkit.getOnlinePlayers().stream()
                             .map(Player::getName)
                             .toArray(String[]::new);
@@ -59,20 +57,17 @@ public class ModerationCommands {
                             .replace("{player}", playerName)
                             .replace("{reason}", reason)
                             .replace("{sender}", sender.getName());
-                    
-                    // Kick the player
+
                     onlineTarget.kickPlayer(kickMessage);
                     
                     // Add to moderation history
                     banlogManager.addModerationEntry(target.getUniqueId(), "KICK", reason, sender.getName());
-                    
-                    // Send confirmation to sender
+
                     sender.sendMessage(plugin.getMessage("kick.confirmation")
                             .replace("{player}", playerName)
                             .replace("{reason}", reason));
-                    
-                    // Broadcast to server (optional)
-                    if (plugin.getConfig().getBoolean("moderation.broadcast_kicks", true)) {
+
+                    if (plugin.getConfig().getBoolean("moderation.broadcast_kicks", false)) {
                         Bukkit.broadcastMessage(plugin.getMessage("kick.broadcast")
                                 .replace("{player}", playerName)
                                 .replace("{reason}", reason)
@@ -84,7 +79,6 @@ public class ModerationCommands {
         // Kick Command without reason
         new CommandAPICommand("kick")
                 .withArguments(new StringArgument("player").replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    // Return online players for tab completion
                     return Bukkit.getOnlinePlayers().stream()
                             .map(Player::getName)
                             .toArray(String[]::new);
@@ -109,20 +103,18 @@ public class ModerationCommands {
                             .replace("{player}", playerName)
                             .replace("{reason}", reason)
                             .replace("{sender}", sender.getName());
-                    
-                    // Kick the player
+
                     onlineTarget.kickPlayer(kickMessage);
                     
                     // Add to moderation history
                     banlogManager.addModerationEntry(target.getUniqueId(), "KICK", reason, sender.getName());
-                    
-                    // Send confirmation to sender
+
                     sender.sendMessage(plugin.getMessage("kick.confirmation")
                             .replace("{player}", playerName)
                             .replace("{reason}", reason));
                     
                     // Broadcast to server (optional)
-                    if (plugin.getConfig().getBoolean("moderation.broadcast_kicks", true)) {
+                    if (plugin.getConfig().getBoolean("moderation.broadcast_kicks", false)) {
                         Bukkit.broadcastMessage(plugin.getMessage("kick.broadcast")
                                 .replace("{player}", playerName)
                                 .replace("{reason}", reason)
@@ -134,7 +126,6 @@ public class ModerationCommands {
         // Temporary Ban Command
         new CommandAPICommand("tempban")
                 .withArguments(new StringArgument("player").replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    // Return online players for tab completion
                     return Bukkit.getOnlinePlayers().stream()
                             .map(Player::getName)
                             .toArray(String[]::new);
@@ -167,23 +158,21 @@ public class ModerationCommands {
                         sender.sendMessage(plugin.getMessage("ban.invalid_duration"));
                         return;
                     }
-                    
-                    // Kick the player if online
+
                     if (target.isOnline()) {
                         target.getPlayer().kickPlayer(banMessage);
                     }
                     
                     // Add to moderation history
                     banlogManager.addModerationEntry(target.getUniqueId(), "TEMPBAN", reason, sender.getName());
-                    
-                    // Send confirmation to sender
+
                     sender.sendMessage(plugin.getMessage("ban.confirmation")
                             .replace("{player}", playerName)
                             .replace("{reason}", reason)
                             .replace("{duration}", formatDuration(duration)));
                     
                     // Broadcast to server (optional)
-                    if (plugin.getConfig().getBoolean("moderation.broadcast_bans", true)) {
+                    if (plugin.getConfig().getBoolean("moderation.broadcast_bans", false)) {
                         Bukkit.broadcastMessage(plugin.getMessage("ban.broadcast")
                                 .replace("{player}", playerName)
                                 .replace("{reason}", reason)
@@ -196,7 +185,6 @@ public class ModerationCommands {
         // Ban Command with reason only
         new CommandAPICommand("ban")
                 .withArguments(new StringArgument("player").replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    // Return online players for tab completion
                     return Bukkit.getOnlinePlayers().stream()
                             .map(Player::getName)
                             .toArray(String[]::new);
@@ -219,23 +207,21 @@ public class ModerationCommands {
                     
                     // Permanent ban
                     Bukkit.getBanList(org.bukkit.BanList.Type.NAME).addBan(playerName, reason, null, sender.getName());
-                    
-                    // Kick the player if online
+
                     if (target.isOnline()) {
                         target.getPlayer().kickPlayer(banMessage);
                     }
                     
                     // Add to moderation history
                     banlogManager.addModerationEntry(target.getUniqueId(), "BAN", reason, sender.getName());
-                    
-                    // Send confirmation to sender
+
                     sender.sendMessage(plugin.getMessage("ban.confirmation")
                             .replace("{player}", playerName)
                             .replace("{reason}", reason)
                             .replace("{duration}", "Permanent"));
                     
                     // Broadcast to server (optional)
-                    if (plugin.getConfig().getBoolean("moderation.broadcast_bans", true)) {
+                    if (plugin.getConfig().getBoolean("moderation.broadcast_bans", false)) {
                         Bukkit.broadcastMessage(plugin.getMessage("ban.broadcast")
                                 .replace("{player}", playerName)
                                 .replace("{reason}", reason)
@@ -248,7 +234,6 @@ public class ModerationCommands {
         // Ban Command without reason
         new CommandAPICommand("ban")
                 .withArguments(new StringArgument("player").replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    // Return online players for tab completion
                     return Bukkit.getOnlinePlayers().stream()
                             .map(Player::getName)
                             .toArray(String[]::new);
@@ -270,23 +255,21 @@ public class ModerationCommands {
                     
                     // Permanent ban
                     Bukkit.getBanList(org.bukkit.BanList.Type.NAME).addBan(playerName, reason, null, sender.getName());
-                    
-                    // Kick the player if online
+
                     if (target.isOnline()) {
                         target.getPlayer().kickPlayer(banMessage);
                     }
                     
                     // Add to moderation history
                     banlogManager.addModerationEntry(target.getUniqueId(), "BAN", reason, sender.getName());
-                    
-                    // Send confirmation to sender
+
                     sender.sendMessage(plugin.getMessage("ban.confirmation")
                             .replace("{player}", playerName)
                             .replace("{reason}", reason)
                             .replace("{duration}", "Permanent"));
                     
                     // Broadcast to server (optional)
-                    if (plugin.getConfig().getBoolean("moderation.broadcast_bans", true)) {
+                    if (plugin.getConfig().getBoolean("moderation.broadcast_bans", false)) {
                         Bukkit.broadcastMessage(plugin.getMessage("ban.broadcast")
                                 .replace("{player}", playerName)
                                 .replace("{reason}", reason)
@@ -339,12 +322,13 @@ public class ModerationCommands {
                         mutedPlayers.remove(playerId);
                         return;
                     }
-                    
-                    // Send confirmation to sender
+
                     sender.sendMessage(plugin.getMessage("mute.confirmation")
                             .replace("{player}", target.getName())
                             .replace("{reason}", reason)
                             .replace("{time}", formatDuration(duration)));
+
+                    banlogManager.addModerationEntry(target.getUniqueId(), "TEMPMUTE", reason, sender.getName());
                 })
                 .register();
         
@@ -373,12 +357,13 @@ public class ModerationCommands {
                     target.sendMessage(plugin.getMessage("mute.target_permanent")
                             .replace("{reason}", reason)
                             .replace("{sender}", sender.getName()));
-                    
-                    // Send confirmation to sender
+
                     sender.sendMessage(plugin.getMessage("mute.confirmation")
                             .replace("{player}", target.getName())
                             .replace("{reason}", reason)
                             .replace("{time}", "Permanent"));
+
+                    banlogManager.addModerationEntry(target.getUniqueId(), "MUTE", reason, sender.getName());
                 })
                 .register();
         
@@ -406,12 +391,13 @@ public class ModerationCommands {
                     target.sendMessage(plugin.getMessage("mute.target_permanent")
                             .replace("{reason}", reason)
                             .replace("{sender}", sender.getName()));
-                    
-                    // Send confirmation to sender
+
                     sender.sendMessage(plugin.getMessage("mute.confirmation")
                             .replace("{player}", target.getName())
                             .replace("{reason}", reason)
                             .replace("{time}", "Permanent"));
+
+                    banlogManager.addModerationEntry(target.getUniqueId(), "MUTE", reason, sender .getName());
                 })
                 .register();
         
@@ -460,7 +446,6 @@ public class ModerationCommands {
         // Banlog Command
         new CommandAPICommand("banlog")
                 .withArguments(new StringArgument("player").replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    // Return online players for tab completion
                     return Bukkit.getOnlinePlayers().stream()
                             .map(Player::getName)
                             .toArray(String[]::new);
@@ -499,12 +484,13 @@ public class ModerationCommands {
         // Banlog Clear Command
         new CommandAPICommand("banlog")
                 .withArguments(new StringArgument("player").replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    // Return online players for tab completion
                     return Bukkit.getOnlinePlayers().stream()
                             .map(Player::getName)
                             .toArray(String[]::new);
                 })))
-                .withArguments(new StringArgument("action"))
+                .withArguments(new StringArgument("action").replaceSuggestions(ArgumentSuggestions.strings(info -> {
+                    return new String[] { "clear" };
+                })))
                 .withPermission("simpleessentials.banlog.clear")
                 .executes((sender, args) -> {
                     String playerName = (String) args.get("player");
@@ -533,7 +519,6 @@ public class ModerationCommands {
         // Unban Command
         new CommandAPICommand("unban")
                 .withArguments(new StringArgument("player").replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    // Return online players for tab completion
                     return Bukkit.getOnlinePlayers().stream()
                             .map(Player::getName)
                             .toArray(String[]::new);
@@ -560,14 +545,13 @@ public class ModerationCommands {
                     
                     // Add to moderation history
                     banlogManager.addModerationEntry(target.getUniqueId(), "UNBAN", reason, sender.getName());
-                    
-                    // Send confirmation to sender
+
                     sender.sendMessage(plugin.getMessage("unban.confirmation")
                             .replace("{player}", playerName)
                             .replace("{reason}", reason));
                     
                     // Broadcast to server (optional)
-                    if (plugin.getConfig().getBoolean("moderation.broadcast_unbans", true)) {
+                    if (plugin.getConfig().getBoolean("moderation.broadcast_unbans", false)) {
                         Bukkit.broadcastMessage(plugin.getMessage("unban.broadcast")
                                 .replace("{player}", playerName)
                                 .replace("{reason}", reason)
@@ -579,7 +563,6 @@ public class ModerationCommands {
         // Unban Command without reason
         new CommandAPICommand("unban")
                 .withArguments(new StringArgument("player").replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    // Return online players for tab completion
                     return Bukkit.getOnlinePlayers().stream()
                             .map(Player::getName)
                             .toArray(String[]::new);
@@ -605,14 +588,13 @@ public class ModerationCommands {
                     
                     // Add to moderation history
                     banlogManager.addModerationEntry(target.getUniqueId(), "UNBAN", reason, sender.getName());
-                    
-                    // Send confirmation to sender
+
                     sender.sendMessage(plugin.getMessage("unban.confirmation")
                             .replace("{player}", playerName)
                             .replace("{reason}", reason));
                     
                     // Broadcast to server (optional)
-                    if (plugin.getConfig().getBoolean("moderation.broadcast_unbans", true)) {
+                    if (plugin.getConfig().getBoolean("moderation.broadcast_unbans", false)) {
                         Bukkit.broadcastMessage(plugin.getMessage("unban.broadcast")
                                 .replace("{player}", playerName)
                                 .replace("{reason}", reason)
@@ -648,14 +630,13 @@ public class ModerationCommands {
                     target.sendMessage(plugin.getMessage("unmute.target")
                             .replace("{reason}", reason)
                             .replace("{sender}", sender.getName()));
-                    
-                    // Send confirmation to sender
+
                     sender.sendMessage(plugin.getMessage("unmute.confirmation")
                             .replace("{player}", target.getName())
                             .replace("{reason}", reason));
                     
                     // Broadcast to server (optional)
-                    if (plugin.getConfig().getBoolean("moderation.broadcast_unmutes", true)) {
+                    if (plugin.getConfig().getBoolean("moderation.broadcast_unmutes", false)) {
                         Bukkit.broadcastMessage(plugin.getMessage("unmute.broadcast")
                                 .replace("{player}", target.getName())
                                 .replace("{reason}", reason)
@@ -690,14 +671,13 @@ public class ModerationCommands {
                     target.sendMessage(plugin.getMessage("unmute.target")
                             .replace("{reason}", reason)
                             .replace("{sender}", sender.getName()));
-                    
-                    // Send confirmation to sender
+
                     sender.sendMessage(plugin.getMessage("unmute.confirmation")
                             .replace("{player}", target.getName())
                             .replace("{reason}", reason));
                     
                     // Broadcast to server (optional)
-                    if (plugin.getConfig().getBoolean("moderation.broadcast_unmutes", true)) {
+                    if (plugin.getConfig().getBoolean("moderation.broadcast_unmutes", false)) {
                         Bukkit.broadcastMessage(plugin.getMessage("unmute.broadcast")
                                 .replace("{player}", target.getName())
                                 .replace("{reason}", reason)

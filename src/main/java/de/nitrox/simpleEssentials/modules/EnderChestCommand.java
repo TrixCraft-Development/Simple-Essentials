@@ -11,7 +11,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -197,7 +196,6 @@ public class EnderChestCommand implements Listener {
      * Gets the nearest valid inventory size
      */
     private int getNearestInventorySize(int slots) {
-        // Valid Minecraft inventory sizes: 9, 18, 27, 36, 45, 54
         int[] validSizes = {9, 18, 27, 36, 45, 54};
         
         for (int size : validSizes) {
@@ -215,7 +213,6 @@ public class EnderChestCommand implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClose(InventoryCloseEvent event) {
         Player player = (Player) event.getPlayer();
-        Inventory inventory = event.getInventory();
         
         // Check if this is an enderchest inventory
         if (!player.hasMetadata("ec_inventory")) {
@@ -224,12 +221,8 @@ public class EnderChestCommand implements Listener {
         
         try {
             String id = player.getMetadata("ec_id").get(0).asString();
-            UUID playerUUID = player.getUniqueId();
             
             plugin.debug("Saving EC " + id + " for " + player.getName());
-            
-            // The inventory is already stored in memory
-            // In a production environment, you'd want to save this to a file/database
             
             // Clear metadata
             player.removeMetadata("ec_id", plugin);
@@ -239,7 +232,7 @@ public class EnderChestCommand implements Listener {
             plugin.debug("Error saving enderchest: " + e.getMessage());
         }
     }
-    
+
     /**
      * Gets a player's enderchest inventory (for other plugins to access)
      */
@@ -254,23 +247,5 @@ public class EnderChestCommand implements Listener {
         }
         
         return idChests.get(player.getUniqueId());
-    }
-    
-    /**
-     * Clears all enderchest data (for admin use)
-     */
-    public void clearAllEnderChests() {
-        enderChests.clear();
-        plugin.debug("All enderchest data cleared");
-    }
-    
-    /**
-     * Clears a specific player's enderchest data
-     */
-    public void clearPlayerEnderChests(UUID playerUUID) {
-        for (Map<UUID, Inventory> idChests : enderChests.values()) {
-            idChests.remove(playerUUID);
-        }
-        plugin.debug("Enderchest data cleared for player " + playerUUID);
     }
 }

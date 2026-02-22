@@ -36,13 +36,6 @@ public class BanlogManager {
     }
     
     /**
-     * Reloads the banlog configuration from file
-     */
-    public void reloadBanlog() {
-        banlogConfig = YamlConfiguration.loadConfiguration(banlogFile);
-    }
-    
-    /**
      * Saves the banlog configuration to file
      */
     public void saveBanlog() {
@@ -126,27 +119,6 @@ public class BanlogManager {
             
             ((SimpleEssentials) plugin).debug("Cleared moderation history for " + playerUUID);
         }
-    }
-    
-    /**
-     * Gets all players with moderation history
-     * @return List of player UUIDs
-     */
-    public List<UUID> getPlayersWithHistory() {
-        List<UUID> players = new ArrayList<>();
-        
-        if (banlogConfig.contains("players")) {
-            for (String uuidString : banlogConfig.getConfigurationSection("players").getKeys(false)) {
-                try {
-                    UUID uuid = UUID.fromString(uuidString);
-                    players.add(uuid);
-                } catch (IllegalArgumentException e) {
-                    ((SimpleEssentials) plugin).debug("Invalid UUID in banlog: " + uuidString);
-                }
-            }
-        }
-        
-        return players;
     }
     
     /**

@@ -22,18 +22,15 @@ import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import dev.jorel.commandapi.CommandAPICommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-
 public final class SimpleEssentials extends JavaPlugin {
-    
-    private File configFile;
-    private FileConfiguration config;
+
+    private SimpleEssentialsInstance instance;
+    private BanlogManager banlogManager;
     private AutoBroadcastCommand autoBroadcastCommand;
     private ServerListModule serverListModule;
+    private VanishCommand vanishCommand;
 
     @Override
     public void onLoad() {
@@ -53,6 +50,9 @@ public final class SimpleEssentials extends JavaPlugin {
         if (getConfig().getBoolean("settings.debug", false)) {
             getLogger().info("Debug mode enabled!");
         }
+
+        instance = new SimpleEssentialsInstance(this);
+        banlogManager = new BanlogManager(this);
         
         getLogger().info("SimpleEssentials enabled!");
 
@@ -95,7 +95,7 @@ public final class SimpleEssentials extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(serverListModule, this);
 
         // Register vanish command and listener
-        VanishCommand vanishCommand = new VanishCommand(this);
+        vanishCommand = new VanishCommand(this);
         Bukkit.getPluginManager().registerEvents(vanishCommand, this);
 
         // Register warp commands
@@ -105,8 +105,8 @@ public final class SimpleEssentials extends JavaPlugin {
         new FlyCommand(this).registerFlyCommands();
         new HealCommand(this).registerHealCommands();
         new GodModeCommand(this).registerGodModeCommands();
-        new UserInfoCommands(this).registerUserInfoCommands();
-        new ModerationCommands(this).registerModerationCommands();
+        new UserInfoCommands(this, banlogManager).registerUserInfoCommands();
+        new ModerationCommands(this, banlogManager).registerModerationCommands();
         invseeCommand.registerInvseeCommands();
         spawnCommand.registerSpawnCommands();
         simpleCommands.registerSimpleCommands();
@@ -167,7 +167,15 @@ public final class SimpleEssentials extends JavaPlugin {
     
     public String getMessage(String path) {
         String prefix = getConfig().getString("messages.prefix", "&6[SimpleEssentials] ").replace("&", "§");
-        String message = getConfig().getString("messages." + path, "").replace("&", "§");
+        String fullPath = "messages." + path;
+        if (!getConfig().contains(fullPath)) {
+            if (isDebugMode()) {
+                debug("Missing message config key: " + fullPath);
+            } else {
+                getLogger().warning("Missing message config key: " + fullPath);
+            }
+        }
+        String message = getConfig().getString(fullPath, "").replace("&", "§");
         return prefix + message;
     }
 
@@ -181,4 +189,17 @@ public final class SimpleEssentials extends JavaPlugin {
         CommandAPI.onDisable();
         getLogger().info("SimpleEssentials disabled!");
     }
+
+    public SimpleEssentialsInstance getInstance() {
+        return instance;
+    }
+
+    public BanlogManager getBanlogManager() {
+        return banlogManager;
+    }
+
+    public VanishCommand getVanishCommand() {
+        return vanishCommand;
+    }
 }
+

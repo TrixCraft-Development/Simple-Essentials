@@ -13,11 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
-import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.StringArgument;
-import dev.jorel.commandapi.arguments.LiteralArgument;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -252,16 +249,14 @@ public class HomesCommand {
                     .replace("{y}", String.format("%.1f", y))
                     .replace("{z}", String.format("%.1f", z))
                     .replace("{date}", createdDate);
-            
-            // Find and replace the home name part with clickable version
+
             int startIndex = fullMessage.indexOf(homeName);
             if (startIndex != -1) {
                 TextComponent clickableName = new TextComponent(homeName);
                 clickableName.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + homeName));
                 clickableName.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
                     new ComponentBuilder(plugin.getMessage("homes.click_tooltip").replace("{name}", homeName)).create()));
-                
-                // Rebuild the component with clickable name
+
                 String before = fullMessage.substring(0, startIndex);
                 String after = fullMessage.substring(startIndex + homeName.length());
                 
@@ -271,7 +266,6 @@ public class HomesCommand {
                 
                 player.spigot().sendMessage(fullComponent);
             } else {
-                // Fallback: send the message as regular text
                 player.sendMessage(fullMessage);
             }
         }

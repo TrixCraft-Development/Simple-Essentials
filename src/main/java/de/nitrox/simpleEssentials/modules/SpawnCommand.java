@@ -77,7 +77,7 @@ public class SpawnCommand implements Listener {
                             .replace("{pitch}", String.format("%.1f", playerLocation.getPitch())));
                     
                     // Broadcast if enabled
-                    if (plugin.getConfig().getBoolean("spawn.broadcast_setspawn", true)) {
+                    if (plugin.getConfig().getBoolean("spawn.broadcast_setspawn", false)) {
                         Bukkit.broadcastMessage(plugin.getMessage("spawn.set_broadcast")
                                 .replace("{player}", player.getName())
                                 .replace("{world}", playerLocation.getWorld().getName()));
@@ -158,6 +158,6 @@ public class SpawnCommand implements Listener {
                     player.sendMessage(plugin.getMessage("spawn.join_teleport"));
                 }
             }
-        }, 20L); // 1 second delay
+        }, 20L);
     }
 }

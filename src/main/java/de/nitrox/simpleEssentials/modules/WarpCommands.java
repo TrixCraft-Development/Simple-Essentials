@@ -11,7 +11,6 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -171,7 +170,6 @@ public class WarpCommands {
         // Warp Command
         new CommandAPICommand("warp")
                 .withArguments(new StringArgument("name").replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    // Return existing warps for tab completion
                     reloadWarpsFile();
                     org.bukkit.configuration.ConfigurationSection warpsSection = warpConfig.getConfigurationSection("warps");
                     if (warpsSection != null) {
@@ -272,8 +270,7 @@ public class WarpCommands {
                             String path = "warps." + warpName;
                             String worldName = warpConfig.getString(path + ".world");
                             String createdBy = warpConfig.getString(path + ".created_by", "Unknown");
-                            
-                            // Send clickable warp name
+
                             sendClickableWarp(player, warpName, worldName, createdBy);
                             count++;
                         }
@@ -292,23 +289,18 @@ public class WarpCommands {
      * Sends a clickable warp message that teleports the player
      */
     private void sendClickableWarp(Player player, String warpName, String worldName, String createdBy) {
-        // Create the base message
         String message = plugin.getMessage("warp.list.entry")
                 .replace("{warp}", warpName)
                 .replace("{world}", worldName)
                 .replace("{creator}", createdBy);
-        
-        // Split the message to make only the warp name clickable
+
         String[] parts = message.split(warpName, 2);
         
         if (parts.length == 2) {
-            // Create text components
             TextComponent component = new TextComponent();
-            
-            // Add the part before the warp name
+
             component.addExtra(new TextComponent(parts[0]));
-            
-            // Add the clickable warp name
+
             TextComponent warpComponent = new TextComponent(warpName);
             warpComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp " + warpName));
             warpComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
@@ -316,14 +308,11 @@ public class WarpCommands {
             warpComponent.setColor(net.md_5.bungee.api.ChatColor.AQUA);
             warpComponent.setBold(true);
             component.addExtra(warpComponent);
-            
-            // Add the part after the warp name
+
             component.addExtra(new TextComponent(parts[1]));
-            
-            // Send the message
+
             player.spigot().sendMessage(component);
         } else {
-            // Fallback to regular message if something goes wrong
             player.sendMessage(message);
         }
     }

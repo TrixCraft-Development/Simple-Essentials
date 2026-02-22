@@ -3,7 +3,6 @@ package de.nitrox.simpleEssentials.modules;
 import de.nitrox.simpleEssentials.SimpleEssentials;
 import dev.jorel.commandapi.CommandAPICommand;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -21,7 +20,6 @@ public class SimpleCommands implements Listener {
     }
     
     public void registerSimpleCommands() {
-        // Workbench Command
         new CommandAPICommand("workbench")
                 .withAliases("wb", "crafting")
                 .withPermission("simpleessentials.workbench")
@@ -39,8 +37,7 @@ public class SimpleCommands implements Listener {
                     player.sendMessage(plugin.getMessage("simplecommands.workbench_opened"));
                 })
                 .register();
-        
-        // Furnace Command
+
         new CommandAPICommand("furnace")
                 .withAliases("f", "smelt")
                 .withPermission("simpleessentials.furnace")
@@ -58,8 +55,7 @@ public class SimpleCommands implements Listener {
                     player.sendMessage(plugin.getMessage("simplecommands.furnace_opened"));
                 })
                 .register();
-        
-        // Anvil Command
+
         new CommandAPICommand("anvil")
                 .withPermission("simpleessentials.anvil")
                 .executes((sender, args) -> {
@@ -76,8 +72,7 @@ public class SimpleCommands implements Listener {
                     player.sendMessage(plugin.getMessage("simplecommands.anvil_opened"));
                 })
                 .register();
-        
-        // Enchanting Table Command
+
         new CommandAPICommand("enchantingtable")
                 .withPermission("simpleessentials.enchantingtable")
                 .executes((sender, args) -> {
@@ -94,8 +89,7 @@ public class SimpleCommands implements Listener {
                     player.sendMessage(plugin.getMessage("simplecommands.enchant_opened"));
                 })
                 .register();
-        
-        // Brewing Stand Command
+
         new CommandAPICommand("brewingstand")
                 .withAliases("brewing", "brew")
                 .withPermission("simpleessentials.brewingstand")
@@ -113,8 +107,7 @@ public class SimpleCommands implements Listener {
                     player.sendMessage(plugin.getMessage("simplecommands.brew_opened"));
                 })
                 .register();
-        
-        // Smithing Table Command
+
         new CommandAPICommand("smithingtable")
                 .withAliases("smithing", "smith")
                 .withPermission("simpleessentials.smithingtable")
@@ -132,8 +125,7 @@ public class SimpleCommands implements Listener {
                     player.sendMessage(plugin.getMessage("simplecommands.smith_opened"));
                 })
                 .register();
-        
-        // Grindstone Command
+
         new CommandAPICommand("grind")
                 .withAliases("grindstone")
                 .withPermission("simpleessentials.grind")
@@ -151,8 +143,7 @@ public class SimpleCommands implements Listener {
                     player.sendMessage(plugin.getMessage("simplecommands.grind_opened"));
                 })
                 .register();
-        
-        // Stonecutter Command
+
         new CommandAPICommand("stonecutter")
                 .withAliases("sc", "stone")
                 .withPermission("simpleessentials.stonecutter")
@@ -170,8 +161,7 @@ public class SimpleCommands implements Listener {
                     player.sendMessage(plugin.getMessage("simplecommands.stonecutter_opened"));
                 })
                 .register();
-        
-        // Cartography Table Command
+
         new CommandAPICommand("cartography")
                 .withAliases("cartographytable", "carto", "map")
                 .withPermission("simpleessentials.cartography")
@@ -189,8 +179,7 @@ public class SimpleCommands implements Listener {
                     player.sendMessage(plugin.getMessage("simplecommands.cartography_opened"));
                 })
                 .register();
-        
-        // Loom Command
+
         new CommandAPICommand("loom")
                 .withAliases("banner")
                 .withPermission("simpleessentials.loom")
@@ -208,8 +197,7 @@ public class SimpleCommands implements Listener {
                     player.sendMessage(plugin.getMessage("simplecommands.loom_opened"));
                 })
                 .register();
-        
-        // Default EnderChest Command (vanilla enderchest)
+
         new CommandAPICommand("enderchest")
                 .withPermission("simpleessentials.enderchest")
                 .executes((sender, args) -> {
@@ -220,8 +208,7 @@ public class SimpleCommands implements Listener {
                     
                     Player player = (Player) sender;
                     plugin.debug("Default EnderChest command executed by: " + player.getName());
-                    
-                    // Open the player's default vanilla enderchest
+
                     player.openInventory(player.getEnderChest());
                     player.sendMessage(plugin.getMessage("simplecommands.enderchest_opened"));
                 })
@@ -229,7 +216,7 @@ public class SimpleCommands implements Listener {
     }
     
     /**
-     * Event handler for inventory close events (for future enhancements)
+     * Event handler for inventory close events
      */
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onInventoryClose(InventoryCloseEvent event) {

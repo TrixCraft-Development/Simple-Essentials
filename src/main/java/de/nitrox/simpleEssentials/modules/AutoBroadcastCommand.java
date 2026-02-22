@@ -4,8 +4,7 @@ import de.nitrox.simpleEssentials.SimpleEssentials;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.ArrayList;
+;
 import java.util.List;
 import java.util.Random;
 
@@ -166,18 +165,7 @@ public class AutoBroadcastCommand {
         stopAutoBroadcast();
         startAutoBroadcast();
     }
-    
-    /**
-     * Gets the current status of auto broadcast
-     */
-    public String getStatus() {
-        if (broadcastTask == null || broadcastTask.isCancelled()) {
-            return "disabled";
-        } else {
-            return "running";
-        }
-    }
-    
+
     /**
      * Gets the next message that will be broadcast (for sequential mode)
      */

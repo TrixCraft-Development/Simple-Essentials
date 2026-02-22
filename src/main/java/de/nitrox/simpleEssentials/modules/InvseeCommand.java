@@ -16,6 +16,8 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 
 import java.util.UUID;
 
@@ -88,35 +90,37 @@ public class InvseeCommand implements Listener {
             }
         }
         
-        // Copy armor slots to editable positions (slots 36-39)
-        // Helmet -> slot 36
+        // Copy armor slots to editable positions (slots 45-48)
+        // Helmet -> slot 45
         ItemStack helmet = targetInv.getHelmet();
         if (helmet != null && helmet.getType() != Material.AIR) {
             invView.setItem(45, helmet.clone());
         }
         
-        // Chestplate -> slot 37
+        // Chestplate -> slot 46
         ItemStack chestplate = targetInv.getChestplate();
         if (chestplate != null && chestplate.getType() != Material.AIR) {
             invView.setItem(46, chestplate.clone());
         }
         
-        // Leggings -> slot 38
+        // Leggings -> slot 47
         ItemStack leggings = targetInv.getLeggings();
         if (leggings != null && leggings.getType() != Material.AIR) {
             invView.setItem(47, leggings.clone());
         }
         
-        // Boots -> slot 39
+        // Boots -> slot 48
         ItemStack boots = targetInv.getBoots();
         if (boots != null && boots.getType() != Material.AIR) {
             invView.setItem(48, boots.clone());
         }
         
-        // Off-hand -> slot 40
+        // Off-hand -> slot 50
         ItemStack offHand = targetInv.getItemInOffHand();
         if (offHand != null && offHand.getType() != Material.AIR) {
-            invView.setItem(49, offHand.clone());
+            invView.setItem(50, offHand.clone());
+            // Store original offhand item for restoration
+            viewer.setMetadata("invsee_original_offhand", new FixedMetadataValue(plugin, offHand.clone()));
         }
         
         // Add separator items for visual clarity
@@ -128,7 +132,6 @@ public class InvseeCommand implements Listener {
         
         viewer.openInventory(invView);
         viewer.sendMessage(plugin.getMessage("invsee.opened_online").replace("{player}", targetName));
-        viewer.sendMessage(plugin.getMessage("invsee.note_online"));
         
         plugin.debug("Opened online inventory for " + targetName + " viewed by " + viewer.getName());
     }
@@ -137,35 +140,31 @@ public class InvseeCommand implements Listener {
      * Opens the inventory of an offline player (read-only)
      */
     private void openOfflineInventory(Player viewer, OfflinePlayer offlineTarget, String targetName) {
-        // Create a custom inventory for offline player
         Inventory invView = Bukkit.createInventory(null, 54, "§6" + targetName + "'s Inventory (Offline)");
-        
+
         // Try to load the player's data
         try {
             UUID targetUUID = offlineTarget.getUniqueId();
             org.bukkit.World world = viewer.getWorld();
-            
+
             // Create a temporary player to load inventory data
             Player tempPlayer = world.getMetadata("invsee_temp_player").isEmpty() ? 
                 null : (Player) world.getMetadata("invsee_temp_player").get(0).value();
             
             if (tempPlayer == null) {
-                // This is a simplified approach - in production, you'd want to use
-                // a proper data loading method or a plugin like ProtocolLib
                 viewer.sendMessage(plugin.getMessage("invsee.offline_limitation"));
                 viewer.sendMessage(plugin.getMessage("invsee.offline_tip1"));
                 viewer.sendMessage(plugin.getMessage("invsee.offline_tip2"));
                 return;
             }
-            
-            // For now, show an empty inventory with a message
+
             ItemStack infoItem = new org.bukkit.inventory.ItemStack(Material.BARRIER);
             org.bukkit.inventory.meta.ItemMeta meta = infoItem.getItemMeta();
             meta.setDisplayName(plugin.getMessage("invsee.offline_info"));
             meta.setLore(plugin.getConfig().getStringList("messages.invsee.offline_lore"));
             infoItem.setItemMeta(meta);
             
-            invView.setItem(22, infoItem); // Center slot
+            invView.setItem(22, infoItem);
             
         } catch (Exception e) {
             plugin.debug("Error loading offline inventory: " + e.getMessage());
@@ -188,7 +187,6 @@ public class InvseeCommand implements Listener {
      * Adds visual separators to distinguish inventory sections
      */
     private void addInventorySeparators(Inventory inventory) {
-        // Create separator items
         ItemStack separator = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
         org.bukkit.inventory.meta.ItemMeta separatorMeta = separator.getItemMeta();
         separatorMeta.setDisplayName("§8");
@@ -204,6 +202,11 @@ public class InvseeCommand implements Listener {
         inventory.setItem(42, separator.clone());
         inventory.setItem(43, separator.clone());
         inventory.setItem(44, separator.clone());
+        inventory.setItem(49, separator.clone());
+        inventory.setItem(51, separator.clone());
+        inventory.setItem(52, separator.clone());
+        inventory.setItem(53, separator.clone());
+
     }
     
     /**
@@ -226,7 +229,7 @@ public class InvseeCommand implements Listener {
         ItemStack clickedItem = event.getCurrentItem();
         
         // Prevent clicking on separator items (slots 36-44)
-        if (slot >= 36 && slot <= 44) {
+        if (slot >= 36 && slot <= 53 && clickedItem != null && clickedItem.getType() == Material.GRAY_STAINED_GLASS_PANE && clickedItem.getItemMeta().getDisplayName().equals("§8")) {
             event.setCancelled(true);
             return;
         }
@@ -281,10 +284,20 @@ public class InvseeCommand implements Listener {
                 player.getInventory().setItemInOffHand(null);
             }
             
-            // Remove separator items from main inventory
-            for (int i = 0; i < 36; i++) {
+            // Restore original offhand item if it exists
+            if (player.hasMetadata("invsee_original_offhand")) {
+                MetadataValue originalOffhandMeta = player.getMetadata("invsee_original_offhand").get(0);
+                if (originalOffhandMeta != null && originalOffhandMeta.value() != null) {
+                    player.getInventory().setItemInOffHand((ItemStack) originalOffhandMeta.value());
+                }
+                player.removeMetadata("invsee_original_offhand", plugin);
+            }
+            
+            // Remove separator items from main inventory (exclude offhand slot 40)
+            for (int i = 0; i < 53; i++) {
+                if (i == 50) continue; // Skip offhand slot
                 ItemStack item = player.getInventory().getItem(i);
-                if (item != null && item.getType() == Material.GRAY_STAINED_GLASS_PANE && item.getItemMeta().getDisplayName().equals("§8")) {
+                if (item != null && item.getType() == Material.GRAY_STAINED_GLASS_PANE && item.getItemMeta().hasDisplayName() && item.getItemMeta().getDisplayName().equals("§8")) {
                     player.getInventory().setItem(i, null);
                 }
             }
@@ -294,6 +307,6 @@ public class InvseeCommand implements Listener {
             player.removeMetadata("invsee_online", plugin);
             
             plugin.debug("Cleared invsee separator items from " + player.getName());
-        }, 1L);
+        }, 1);
     }
 }

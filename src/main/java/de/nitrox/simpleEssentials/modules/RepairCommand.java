@@ -1,6 +1,7 @@
 package de.nitrox.simpleEssentials.modules;
 
 import de.nitrox.simpleEssentials.SimpleEssentials;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,7 +28,9 @@ public class RepairCommand {
         // Main repair command with optional subcommand and optional player target
         new CommandAPICommand("repair")
             .withPermission("simpleessentials.repair")
-            .withArguments(new StringArgument("subcommand").setOptional(true))
+            .withArguments(new StringArgument("subcommand").setOptional(true).replaceSuggestions(ArgumentSuggestions.strings(info -> {
+    return new String[]{"all", "inventory", "hand"};
+})))
             .withArguments(new PlayerArgument("target").setOptional(true))
             .executes((sender, args) -> {
                 String[] commandArgs = new String[0];
@@ -47,15 +50,13 @@ public class RepairCommand {
     }
     
     public boolean onCommand(CommandSender sender, String[] args, Player target) {
-        // Check if sender is a player (unless they have repair.others permission)
         if (!(sender instanceof Player) && target == null) {
             sender.sendMessage(plugin.getMessage("repair.player_only"));
             return true;
         }
         
         Player player = sender instanceof Player ? (Player) sender : null;
-        
-        // If no target specified, repair self (must be player)
+
         if (target == null) {
             if (player == null) {
                 sender.sendMessage(plugin.getMessage("repair.console_need_target"));
@@ -72,26 +73,22 @@ public class RepairCommand {
                 return true;
             }
         } else if (player == null) {
-            // Console needs repair.others permission to repair other players
             if (!sender.hasPermission("simpleessentials.repair.others")) {
                 sender.sendMessage(plugin.getMessage("repair.no_others_permission"));
                 return true;
             }
         }
-        
-        // Check basic repair permission
+
         if (!sender.hasPermission("simpleessentials.repair")) {
             sender.sendMessage(plugin.getMessage("repair.no_permission"));
             return true;
         }
-        
-        // Determine repair mode (default to "all")
+
         String repairMode = "all";
         if (args.length > 0) {
             repairMode = args[0].toLowerCase();
         }
-        
-        // Execute repair based on mode
+
         switch (repairMode) {
             case "all":
             case "inventory":

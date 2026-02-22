@@ -15,32 +15,27 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-
-import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.Argument;
-import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.arguments.PlayerArgument;
 
 public class DeathLogCommand implements Listener {
-    
+
     private final SimpleEssentials plugin;
     private File deathsFile;
     private FileConfiguration deathsConfig;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
     private final Map<UUID, Map<String, ItemStack[]>> deathInventories = new HashMap<>();
-    
+
     public DeathLogCommand(SimpleEssentials plugin) {
         this.plugin = plugin;
         setupDeathsFile();
     }
-    
+
     /**
      * Sets up the deaths configuration file
      */
@@ -49,73 +44,70 @@ public class DeathLogCommand implements Listener {
         if (!deathsFile.exists()) {
             try {
                 deathsFile.createNewFile();
+                plugin.debug("Created deaths.yml file");
             } catch (IOException e) {
                 plugin.getLogger().severe("Could not create deaths.yml: " + e.getMessage());
             }
         }
         deathsConfig = YamlConfiguration.loadConfiguration(deathsFile);
+        plugin.debug("Loaded deaths configuration file");
     }
-    
-    /**
-     * Reloads the deaths configuration
-     */
-    public void reloadDeathsConfig() {
-        if (deathsFile == null) {
-            deathsFile = new File(plugin.getDataFolder(), "deaths.yml");
-        }
-        deathsConfig = YamlConfiguration.loadConfiguration(deathsFile);
-    }
-    
+
     /**
      * Saves the deaths configuration
      */
     private void saveDeathsConfig() {
         try {
             deathsConfig.save(deathsFile);
+            plugin.debug("Saved deaths configuration file");
         } catch (IOException e) {
             plugin.getLogger().severe("Could not save deaths.yml: " + e.getMessage());
         }
     }
-    
+
     /**
      * Registers the deathlog commands
      */
     public void registerDeathLogCommands() {
+        plugin.debug("Registering deathlog commands");
         // /deathlog [player] command
         new CommandAPICommand("deathlog")
-            .withPermission("simpleessentials.deathlog")
-            .withArguments(new PlayerArgument("target").setOptional(true))
-            .executes((sender, args) -> {
-                Player target = null;
-                
-                if (args.get(0) != null) {
-                    target = (Player) args.get(0);
-                } else {
-                    // No target specified, use sender if player
-                    if (sender instanceof Player) {
-                        target = (Player) sender;
+                .withPermission("simpleessentials.deathlog")
+                .withArguments(new PlayerArgument("target").setOptional(true))
+                .executes((sender, args) -> {
+                    Player target = null;
+
+                    if (args.get(0) != null) {
+                        target = (Player) args.get(0);
+                        plugin.debug("Deathlog requested for player: " + target.getName());
                     } else {
-                        sender.sendMessage(plugin.getMessage("deathlog.player_only"));
-                        return;
+                        if (sender instanceof Player) {
+                            target = (Player) sender;
+                            plugin.debug("Deathlog requested for self: " + target.getName());
+                        } else {
+                            sender.sendMessage(plugin.getMessage("deathlog.player_only"));
+                            return;
+                        }
                     }
-                }
-                
-                openDeathLogGUI((CommandSender) sender, target);
-            })
-            .register();
+
+                    openDeathLogGUI((CommandSender) sender, target);
+                })
+                .register();
+        plugin.debug("Deathlog commands registered successfully");
     }
-    
+
     /**
      * Handles player death events
      */
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        
+        plugin.debug("Player death event triggered for: " + player.getName());
+
         // Create death entry
         String deathId = UUID.randomUUID().toString();
         long timestamp = System.currentTimeMillis();
-        
+
         // Store death information
         String playerPath = "deaths." + player.getUniqueId().toString() + "." + deathId;
         deathsConfig.set(playerPath + ".timestamp", timestamp);
@@ -128,24 +120,25 @@ public class DeathLogCommand implements Listener {
         deathsConfig.set(playerPath + ".server", plugin.getServer().getName());
         deathsConfig.set(playerPath + ".xp_level", player.getLevel());
         deathsConfig.set(playerPath + ".dimension", player.getWorld().getEnvironment().name());
-        
+
         saveDeathsConfig();
-        
+
         // Store player inventory at death
         ItemStack[] inventoryContents = player.getInventory().getContents();
         ItemStack[] armorContents = player.getInventory().getArmorContents();
         ItemStack[] offhandContents = new ItemStack[]{player.getInventory().getItemInOffHand()};
-        
+
         // Combine all items
         ItemStack[] allItems = new ItemStack[inventoryContents.length + armorContents.length + offhandContents.length];
         System.arraycopy(inventoryContents, 0, allItems, 0, inventoryContents.length);
         System.arraycopy(armorContents, 0, allItems, inventoryContents.length, armorContents.length);
         System.arraycopy(offhandContents, 0, allItems, inventoryContents.length + armorContents.length, offhandContents.length);
-        
+
         // Store in memory for GUI access
         deathInventories.computeIfAbsent(player.getUniqueId(), k -> new HashMap<>()).put(deathId, allItems);
-        
+
         plugin.getLogger().info("Death logged for " + player.getName() + ": " + event.getDeathMessage());
+        plugin.debug("Stored death inventory with " + allItems.length + " items for death ID: " + deathId);
     }
 
     /**
@@ -156,19 +149,18 @@ public class DeathLogCommand implements Listener {
         String title = event.getView().getTitle();
         Player player = (Player) event.getWhoClicked();
 
-        // Check if this is a death log GUI
         if (title.contains("Death Log")) {
             event.setCancelled(true);
             ItemStack clicked = event.getCurrentItem();
 
             if (clicked == null || clicked.getType() != Material.SKELETON_SKULL) {
+                plugin.debug("Player " + player.getName() + " clicked non-skull item in death log GUI");
                 return;
             }
 
-            // Get the death ID from the skull's display name (timestamp)
             String deathTime = clicked.getItemMeta().getDisplayName().replace("§e", "");
+            plugin.debug("Player " + player.getName() + " clicked death skull with time: " + deathTime);
 
-            // Find the player and death ID by matching timestamp across all players
             for (UUID playerUuid : deathInventories.keySet()) {
                 Map<String, ItemStack[]> playerDeaths = deathInventories.get(playerUuid);
                 if (playerDeaths != null) {
@@ -180,17 +172,17 @@ public class DeathLogCommand implements Listener {
 
                         if (formattedTime.equals(deathTime)) {
                             Player target = Bukkit.getPlayer(playerUuid);
+                            plugin.debug("Found matching death entry for UUID: " + playerUuid.toString() + ", Death ID: " + deathId);
                             return;
                         }
                     }
                 }
             }
         }
-        
-        // Check if this is a death inventory GUI
+
         if (title.contains("Death Inventory")) {
-            // Prevent all item movement in death inventory
             event.setCancelled(true);
+            plugin.debug("Player " + player.getName() + " attempted to interact with death inventory GUI");
         }
     }
 
@@ -205,10 +197,12 @@ public class DeathLogCommand implements Listener {
 
         Player viewer = (Player) sender;
         String playerPath = "deaths." + target.getUniqueId().toString();
+        plugin.debug("Opening death log GUI for player: " + target.getName() + " (viewer: " + viewer.getName() + ")");
 
         if (!deathsConfig.contains(playerPath)) {
             viewer.sendMessage(plugin.getMessage("deathlog.no_deaths")
                     .replace("{player}", target.getName()));
+            plugin.debug("No deaths found for player: " + target.getName());
             return;
         }
 
@@ -223,11 +217,10 @@ public class DeathLogCommand implements Listener {
 
         // Sort by timestamp (newest first)
         sortedDeaths.sort((a, b) -> Long.compare(b.getValue(), a.getValue()));
+        plugin.debug("Found " + sortedDeaths.size() + " death entries for player: " + target.getName());
 
-        // Create GUI (54 slots - 6 rows, last row for navigation)
         Inventory gui = Bukkit.createInventory(null, 54, "Death Log");
 
-        // Add death skulls (first 5 rows, 45 slots)
         int slot = 0;
         for (int i = 0; i < Math.min(sortedDeaths.size(), 45); i++) {
             Map.Entry<String, Long> entry = sortedDeaths.get(i);
@@ -240,29 +233,28 @@ public class DeathLogCommand implements Listener {
             slot++;
         }
 
-        // Add navigation items (last row)
         addNavigationItems(gui, target, sortedDeaths, 0);
 
         viewer.openInventory(gui);
+        plugin.debug("Opened death log GUI with " + Math.min(sortedDeaths.size(), 45) + " entries for viewer: " + viewer.getName());
     }
-    
+
     /**
      * Creates a skull item for a death entry
      */
     private ItemStack createDeathSkull(Player target, String deathId, long timestamp) {
         ItemStack skull = new ItemStack(Material.SKELETON_SKULL);
         SkullMeta meta = (SkullMeta) skull.getItemMeta();
-        
+
         if (meta != null) {
             // Set display name with death time
             String deathTime = dateFormat.format(new Date(timestamp));
             meta.setDisplayName(plugin.getMessage("deathlog.skull_name")
                     .replace("{time}", deathTime));
-            
-            // Create lore with death information
+
             List<String> lore = new ArrayList<>();
             String playerPath = "deaths." + target.getUniqueId().toString() + "." + deathId;
-            
+
             lore.add(plugin.getMessage("deathlog.lore_world")
                     .replace("{world}", deathsConfig.getString(playerPath + ".world", "Unknown")));
             lore.add(plugin.getMessage("deathlog.lore_coordinates")
@@ -279,19 +271,19 @@ public class DeathLogCommand implements Listener {
                     .replace("{level}", String.valueOf(deathsConfig.getInt(playerPath + ".xp_level", 0))));
             lore.add(plugin.getMessage("deathlog.lore_dimension")
                     .replace("{dimension}", deathsConfig.getString(playerPath + ".dimension", "Unknown")));
-            
+
             meta.setLore(lore);
             skull.setItemMeta(meta);
         }
-        
+
+        plugin.debug("Created death skull for death ID: " + deathId + " at time: " + dateFormat.format(new Date(timestamp)));
         return skull;
     }
-    
+
     /**
      * Adds navigation items to the GUI
      */
     private void addNavigationItems(Inventory gui, Player target, List<Map.Entry<String, Long>> deaths, int page) {
-        // Previous page button (slot 45)
         if (page > 0) {
             ItemStack prevButton = new ItemStack(Material.ARROW);
             ItemMeta prevMeta = prevButton.getItemMeta();
@@ -301,8 +293,7 @@ public class DeathLogCommand implements Listener {
             }
             gui.setItem(45, prevButton);
         }
-        
-        // Next page button (slot 53)
+
         if ((page + 1) * 45 < deaths.size()) {
             ItemStack nextButton = new ItemStack(Material.ARROW);
             ItemMeta nextMeta = nextButton.getItemMeta();
@@ -312,8 +303,7 @@ public class DeathLogCommand implements Listener {
             }
             gui.setItem(53, nextButton);
         }
-        
-        // Info item (slot 49 - center of last row)
+
         ItemStack infoItem = new ItemStack(Material.BOOK);
         ItemMeta infoMeta = infoItem.getItemMeta();
         if (infoMeta != null) {
@@ -328,7 +318,7 @@ public class DeathLogCommand implements Listener {
         gui.setItem(49, infoItem);
     }
 
-    
+
     /**
      * Opens the death inventory GUI for an offline player
      */
@@ -336,28 +326,21 @@ public class DeathLogCommand implements Listener {
         Map<String, ItemStack[]> playerDeaths = deathInventories.get(playerUuid);
         if (playerDeaths == null || !playerDeaths.containsKey(deathId)) {
             viewer.sendMessage(plugin.getMessage("deathlog.inventory_not_found"));
+            plugin.debug("Death inventory not found for UUID: " + playerUuid.toString() + ", Death ID: " + deathId);
             return;
         }
-        
+
         ItemStack[] deathItems = playerDeaths.get(deathId);
-        
-        // Create inventory with death items
+
         Inventory deathInv = Bukkit.createInventory(null, 54, "Death Inventory");
-        
-        // Place items (first 36 slots for main inventory, next 4 for armor, last for offhand)
+
         for (int i = 0; i < Math.min(deathItems.length, 54); i++) {
             if (deathItems[i] != null) {
                 deathInv.setItem(i, deathItems[i].clone());
             }
         }
-        
+
         viewer.openInventory(deathInv);
-    }
-    
-    /**
-     * Gets death inventory for a player (for inventory click handling)
-     */
-    public Map<UUID, Map<String, ItemStack[]>> getDeathInventories() {
-        return deathInventories;
+        plugin.debug("Opened death inventory GUI for viewer: " + viewer.getName() + " with " + deathItems.length + " items");
     }
 }

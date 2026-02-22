@@ -6,8 +6,6 @@ import dev.jorel.commandapi.arguments.PlayerArgument;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.HashSet;
 import java.util.Set;

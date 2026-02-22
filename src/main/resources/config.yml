@@ -5,14 +5,14 @@ serverlist:
   # MOTD (Message of the Day) - Two lines displayed in server list
   motd:
     line1: "&6Welcome to our Server!"
-    line2: "&7A Minecraft Server &8| &fVersion 1.21.4"
+    line2: "&7A Minecraft Server"
   
-  # Maximum players displayed in server list (overrides real max players)
-  max_players: 200
+  # Maximum players displayed in server list
+  max_players: 20
   
   # Fake player count settings
   fake_players:
-    enabled: true  # Set to true to override real online player count
+    enabled: false  # Set to true to override real online player count
     mode: "range"  # "static" or "range"
     
     # Static mode settings
@@ -26,7 +26,7 @@ serverlist:
     # Dynamic refresh settings
     dynamic_refresh:
       enabled: true  # Set to true to automatically refresh fake player count
-      interval_ticks: 20  # Refresh interval in ticks (20 ticks = 1 second). 6000 ticks = 5 minutes
+      interval_ticks: 20  # Refresh interval in ticks (20 ticks = 1 second)
 
 # Messages
 messages:
@@ -55,14 +55,6 @@ messages:
     never_joined: "&c{player} has never joined the server!"
     header: "&6=== User Info: &f{player} &6==="
     footer: "&6======================"
-  vanish:
-    player_only: "&cThis command can only be used by players!"
-    vanished: "&aYou are now vanished! You are invisible to other players and mobs."
-    unvanished: "&aYou are now visible to other players and mobs."
-    auto_vanished: "&aYou have automatically joined vanished! No one can see you."
-    autovanish_enabled: "&aAuto-vanish enabled! You will join vanished on your next login."
-    autovanish_disabled: "&cAuto-vanish disabled! You will join normally on your next login."
-    autovanish_no_permission: "&cYou don't have permission to use auto-vanish!"
     username: "&7Username: &f{player}"
     uuid: "&7UUID: &f{uuid}"
     status_online: "&7Status: &aOnline"
@@ -76,21 +68,28 @@ messages:
     health: "&7Health: &f{health}/20.0"
     saturation: "&7Saturation: &f{saturation}"
     xp_level: "&7XP Level: &f{xp}"
-    client: "&7Client: &f{client}"
     last_seen: "&7Last Seen: &f{date}"
     actions:
       header: "&6=== Actions ==="
       banlog: "&7[&6Banlog&7] &f({count} entries) &7- Click to view"
       invsee: "&7[&6InvSee&7] &7- Click to open inventory"
       teleport: "&7[&6Teleport&7] &7- Click to teleport to &f{x}, {y}, {z}"
+  vanish:
+    player_only: "&cThis command can only be used by players!"
+    vanished: "&aYou are now vanished! You are invisible to other players and mobs."
+    unvanished: "&aYou are now visible to other players and mobs."
+    auto_vanished: "&aYou have automatically joined vanished! No one can see you."
+    autovanish_enabled: "&aAuto-vanish enabled! You will join vanished on your next login."
+    autovanish_disabled: "&cAuto-vanish disabled! You will join normally on your next login."
+    autovanish_no_permission: "&cYou don't have permission to use auto-vanish!"
   warp:
     player_only: "&cThis command can only be used by players!"
     set:
       name_empty: "&cWarp name cannot be empty!"
       name_too_long: "&cWarp name cannot be longer than 20 characters!"
       invalid_characters: "&cWarp name cannot contain spaces, dots, or slashes!"
-      already_exists: "&cWarp '{warp}' already exists!"
-      success: "&aWarp '{warp}' created at {world} ({x}, {y}, {z})!"
+      already_exists: "&cWarp '&e{warp}&c' already exists!"
+      success: "&aWarp '&e{warp}&a' created at {world} ({x}, {y}, {z})!"
     delete:
       not_found: "&cWarp '{warp}' not found!"
       success: "&aWarp '{warp}' has been deleted!"
@@ -105,9 +104,6 @@ messages:
       no_access: "&7You don't have access to any warps!"
       entry: "&7- &f{warp} &7({world}) &8- Created by {creator}"
       footer: "&6=== {count} warps available ==="
-  namehistory:
-    header: "&6=== &eName History for {player} &6==="
-    never_joined: "&c{player} has never joined the server!"
   firstjoin:
     result: "&a{player} first joined on &e{date}"
     unknown: "&cUnable to determine {player}'s first join date"
@@ -123,7 +119,6 @@ messages:
     cannot_view: "&cYou cannot view {player}'s inventory!"
     opened_online: "&aOpened {player}'s inventory"
     opened_offline: "&aOpened {player}'s inventory (read-only)"
-    note_online: "&7Note: Changes are saved automatically when you close the inventory"
     note_offline: "&7Offline player inventories are read-only"
     changes_saved: "&aChanges saved to {player}'s inventory"
     offline_limitation: "&cOffline inventory viewing requires additional setup."
@@ -282,12 +277,12 @@ messages:
     broadcast: "&a{player} was unmuted by {sender} for: &f{reason}"
 
 settings:
-  debug: true
+  debug: false
 
 # Spawn Settings
 spawn:
   enforce-spawn-on-join: false
-  broadcast_setspawn: true
+  broadcast_setspawn: false
   send_message_on_teleport: true
   location:
     world: "world"
@@ -310,7 +305,7 @@ enderchest:
 
 # Moderation settings
 moderation:
-  broadcast_kicks: true
-  broadcast_bans: true
-  broadcast_unbans: true
-  broadcast_unmutes: true
+  broadcast_kicks: false
+  broadcast_bans: false
+  broadcast_unbans: false
+  broadcast_unmutes: false
