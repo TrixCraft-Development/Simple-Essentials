@@ -134,7 +134,6 @@ public final class SimpleEssentials extends JavaPlugin {
                 .executes((sender, args) -> {
                     sender.sendMessage(ChatColor.GREEN + "=== " + ChatColor.GRAY +"SimpleEssentials Commands" + ChatColor.GREEN + " ===");
                     sender.sendMessage(ChatColor.GRAY + "/se reload");
-                    sender.sendMessage(ChatColor.GRAY + "/se help");
                 })
 
                 .withSubcommand(
