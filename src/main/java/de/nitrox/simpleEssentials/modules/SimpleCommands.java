@@ -39,7 +39,6 @@ public class SimpleCommands implements Listener {
                 .register();
 
         new CommandAPICommand("furnace")
-                .withAliases("f", "smelt")
                 .withPermission("simpleessentials.furnace")
                 .executes((sender, args) -> {
                     if (!(sender instanceof Player)) {
@@ -91,7 +90,7 @@ public class SimpleCommands implements Listener {
                 .register();
 
         new CommandAPICommand("brewingstand")
-                .withAliases("brewing", "brew")
+                .withAliases("brewing")
                 .withPermission("simpleessentials.brewingstand")
                 .executes((sender, args) -> {
                     if (!(sender instanceof Player)) {
@@ -109,7 +108,7 @@ public class SimpleCommands implements Listener {
                 .register();
 
         new CommandAPICommand("smithingtable")
-                .withAliases("smithing", "smith")
+                .withAliases("smithing")
                 .withPermission("simpleessentials.smithingtable")
                 .executes((sender, args) -> {
                     if (!(sender instanceof Player)) {
@@ -126,9 +125,9 @@ public class SimpleCommands implements Listener {
                 })
                 .register();
 
-        new CommandAPICommand("grind")
-                .withAliases("grindstone")
-                .withPermission("simpleessentials.grind")
+        new CommandAPICommand("grindstone")
+                .withAliases("grind")
+                .withPermission("simpleessentials.grindstone")
                 .executes((sender, args) -> {
                     if (!(sender instanceof Player)) {
                         sender.sendMessage(plugin.getMessage("simplecommands.player_only"));
@@ -145,7 +144,7 @@ public class SimpleCommands implements Listener {
                 .register();
 
         new CommandAPICommand("stonecutter")
-                .withAliases("sc", "stone")
+                .withAliases("sc")
                 .withPermission("simpleessentials.stonecutter")
                 .executes((sender, args) -> {
                     if (!(sender instanceof Player)) {
@@ -162,9 +161,9 @@ public class SimpleCommands implements Listener {
                 })
                 .register();
 
-        new CommandAPICommand("cartography")
-                .withAliases("cartographytable", "carto", "map")
-                .withPermission("simpleessentials.cartography")
+        new CommandAPICommand("cartographytable")
+                .withAliases("cartography")
+                .withPermission("simpleessentials.cartographytable")
                 .executes((sender, args) -> {
                     if (!(sender instanceof Player)) {
                         sender.sendMessage(plugin.getMessage("simplecommands.player_only"));
@@ -181,7 +180,6 @@ public class SimpleCommands implements Listener {
                 .register();
 
         new CommandAPICommand("loom")
-                .withAliases("banner")
                 .withPermission("simpleessentials.loom")
                 .executes((sender, args) -> {
                     if (!(sender instanceof Player)) {

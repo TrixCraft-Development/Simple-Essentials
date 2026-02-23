@@ -132,7 +132,7 @@ public class ModerationCommands {
                 })))
                 .withArguments(new StringArgument("duration"))
                 .withArguments(new GreedyStringArgument("reason"))
-                .withPermission("simpleessentials.ban")
+                .withPermission("simpleessentials.tempban")
                 .executes((sender, args) -> {
                     String playerName = (String) args.get("player");
                     String durationStr = (String) args.get("duration");
@@ -284,7 +284,7 @@ public class ModerationCommands {
                 .withArguments(new PlayerArgument("player"))
                 .withArguments(new StringArgument("time"))
                 .withArguments(new GreedyStringArgument("reason"))
-                .withPermission("simpleessentials.mute")
+                .withPermission("simpleessentials.tempmute")
                 .executes((sender, args) -> {
                     Player target = (Player) args.get("player");
                     String timeStr = (String) args.get("time");

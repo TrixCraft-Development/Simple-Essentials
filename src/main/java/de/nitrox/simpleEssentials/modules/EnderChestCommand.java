@@ -36,7 +36,7 @@ public class EnderChestCommand implements Listener {
                     }
                     return new String[0];
                 })).setOptional(true))
-                .withPermission("simpleessentials.enderchest")
+                .withPermission("simpleessentials.custom.enderchest")
                 .executes((sender, args) -> {
                     if (!(sender instanceof Player)) {
                         sender.sendMessage(plugin.getMessage("enderchest.player_only"));
@@ -47,49 +47,6 @@ public class EnderChestCommand implements Listener {
                     String id = args.getOptional("id").map(Object::toString).orElse("1"); // Default to "1" if no ID provided
                     
                     plugin.debug("EC command executed: player=" + player.getName() + ", id=" + id);
-                    
-                    // Validate ID
-                    if (!isValidId(id)) {
-                        player.sendMessage(plugin.getMessage("enderchest.invalid_id")
-                                .replace("{id}", id)
-                                .replace("{max}", String.valueOf(getMaxId())));
-                        return;
-                    }
-                    
-                    // Check permission
-                    String permission = "simpleessentials.enderchest." + id;
-                    if (!player.hasPermission(permission)) {
-                        player.sendMessage(plugin.getMessage("enderchest.no_permission")
-                                .replace("{id}", id));
-                        return;
-                    }
-                    
-                    // Open enderchest
-                    openEnderChest(player, id);
-                })
-                .register();
-        
-        // EnderChest alias
-        new CommandAPICommand("enderchest")
-                .withArguments(new StringArgument("id").replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    // Return available IDs based on player permissions
-                    if (info.sender() instanceof Player) {
-                        Player player = (Player) info.sender();
-                        return getAvailableIds(player).toArray(new String[0]);
-                    }
-                    return new String[0];
-                })))
-                .withPermission("simpleessentials.enderchest")
-                .executes((sender, args) -> {
-                    if (!(sender instanceof Player)) {
-                        sender.sendMessage(plugin.getMessage("enderchest.player_only"));
-                        return;
-                    }
-                    
-                    Player player = (Player) sender;
-                    String id = (String) args.get("id");
-                    
-                    plugin.debug("EnderChest command executed: player=" + player.getName() + ", id=" + id);
                     
                     // Validate ID
                     if (!isValidId(id)) {
