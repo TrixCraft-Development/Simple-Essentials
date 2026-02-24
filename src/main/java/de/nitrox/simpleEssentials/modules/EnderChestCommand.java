@@ -57,7 +57,7 @@ public class EnderChestCommand implements Listener {
                     }
                     
                     // Check permission
-                    String permission = "simpleessentials.enderchest." + id;
+                    String permission = "simpleessentials.custom.enderchest." + id;
                     if (!player.hasPermission(permission)) {
                         player.sendMessage(plugin.getMessage("enderchest.no_permission")
                                 .replace("{id}", id));
@@ -108,7 +108,7 @@ public class EnderChestCommand implements Listener {
         
         for (int i = 1; i <= maxId; i++) {
             String id = String.valueOf(i);
-            if (player.hasPermission("simpleessentials.enderchest." + id)) {
+            if (player.hasPermission("simpleessentials.custom.enderchest." + id)) {
                 availableIds.add(id);
             }
         }
