@@ -102,7 +102,7 @@ messages:
       header: "&6=== Available Warps ==="
       empty: "&7No warps have been created yet!"
       no_access: "&7You don't have access to any warps!"
-      entry: "&7- &f{warp} &7({world}) &8- Created by {creator}"
+      entry: "&7- &f{warp} &7({world}) &7- Created by {creator}"
       footer: "&6=== {count} warps available ==="
   firstjoin:
     result: "&a{player} first joined on &e{date}"
@@ -251,17 +251,17 @@ messages:
     expired: "&aYour mute has expired!"
     invalid_time: "&cInvalid time format! Use: 10s, 5m, 2h, 1d"
   banlist:
-    header: "&6=== &eActive Bans & Mutes &6==="
+    header: "&6=== &eActive Bans / Mutes &6==="
     bans_header: "&cActive Bans:"
     no_bans: "&7No active bans"
-    ban_entry: "&8» &c{player} &7- &f{reason} &7({duration}) &8- &7by {source}"
+    ban_entry: "&8» &c{player} &7- &f{reason} &7({duration}) &7- &7by {source}"
     mutes_header: "&eActive Mutes:"
     no_mutes: "&7No active mutes"
     mute_entry: "&8» &e{player}"
   banlog:
     header: "&6=== &eModeration History for {player} &6==="
     no_history: "&7No moderation history found for {player}"
-    entry: "&8[{date}] &7{type} &8- &f{reason} &8- &7by {executor}"
+    entry: "&8[{date}] &7{type} &7- &f{reason} &7- &7by {executor}"
     clear_usage: "&cUsage: /banlog <player> clear"
     cleared: "&a{player}'s moderation history has been cleared by {sender}"
   unban:

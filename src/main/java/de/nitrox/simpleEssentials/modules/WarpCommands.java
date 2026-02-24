@@ -289,31 +289,38 @@ public class WarpCommands {
      * Sends a clickable warp message that teleports the player
      */
     private void sendClickableWarp(Player player, String warpName, String worldName, String createdBy) {
-        String message = plugin.getMessage("warp.list.entry")
-                .replace("{warp}", warpName)
+        // Get the config message and parse it properly to preserve colors
+        String rawMessage = plugin.getMessage("warp.list.entry")
+                .replace("{warp}", "{WARP_PLACEHOLDER}")
                 .replace("{world}", worldName)
                 .replace("{creator}", createdBy);
 
-        String[] parts = message.split(warpName, 2);
+        // Split by placeholder and reconstruct with clickable warp
+        String[] parts = rawMessage.split("\\{WARP_PLACEHOLDER\\}", 2);
         
         if (parts.length == 2) {
             TextComponent component = new TextComponent();
-
-            component.addExtra(new TextComponent(parts[0]));
-
+            
+            // Add first part with colors
+            TextComponent beforePart = new TextComponent(parts[0]);
+            component.addExtra(beforePart);
+            
+            // Add clickable warp name with white color (from config &f)
             TextComponent warpComponent = new TextComponent(warpName);
+            warpComponent.setColor(net.md_5.bungee.api.ChatColor.WHITE);
             warpComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp " + warpName));
             warpComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
                 new ComponentBuilder("§aClick to teleport to " + warpName + "\n§7World: " + worldName + "\n§7Created by: " + createdBy).create()));
-            warpComponent.setColor(net.md_5.bungee.api.ChatColor.AQUA);
-            warpComponent.setBold(true);
             component.addExtra(warpComponent);
-
-            component.addExtra(new TextComponent(parts[1]));
-
+            
+            // Add second part with colors
+            TextComponent afterPart = new TextComponent(parts[1]);
+            component.addExtra(afterPart);
+            
             player.spigot().sendMessage(component);
         } else {
-            player.sendMessage(message);
+            // Fallback: send the message without click functionality but with colors
+            player.sendMessage(rawMessage.replace("{WARP_PLACEHOLDER}", warpName));
         }
     }
 }
