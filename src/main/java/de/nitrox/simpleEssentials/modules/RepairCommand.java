@@ -14,7 +14,7 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.Argument;
 import dev.jorel.commandapi.arguments.StringArgument;
-import dev.jorel.commandapi.arguments.PlayerArgument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 
 public class RepairCommand {
     
@@ -31,7 +31,7 @@ public class RepairCommand {
             .withArguments(new StringArgument("subcommand").setOptional(true).replaceSuggestions(ArgumentSuggestions.strings(info -> {
     return new String[]{"all", "inventory", "hand"};
 })))
-            .withArguments(new PlayerArgument("target").setOptional(true))
+            .withArguments(new EntitySelectorArgument.OnePlayer("target").setOptional(true))
             .executes((sender, args) -> {
                 String[] commandArgs = new String[0];
                 Player target = null;

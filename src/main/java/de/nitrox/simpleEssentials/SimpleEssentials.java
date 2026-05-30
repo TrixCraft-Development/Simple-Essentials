@@ -18,7 +18,7 @@ import de.nitrox.simpleEssentials.modules.UserInfoCommands;
 import de.nitrox.simpleEssentials.modules.VanishCommand;
 import de.nitrox.simpleEssentials.modules.WarpCommands;
 import dev.jorel.commandapi.CommandAPI;
-import dev.jorel.commandapi.CommandAPIBukkitConfig;
+import dev.jorel.commandapi.CommandAPIPaperConfig;
 import dev.jorel.commandapi.CommandAPICommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -35,7 +35,7 @@ public final class SimpleEssentials extends JavaPlugin {
     @Override
     public void onLoad() {
         CommandAPI.onLoad(
-                new CommandAPIBukkitConfig(this)
+                new CommandAPIPaperConfig(this)
                         .verboseOutput(false)
         );
     }

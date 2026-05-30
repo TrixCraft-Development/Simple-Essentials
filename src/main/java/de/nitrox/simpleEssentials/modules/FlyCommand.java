@@ -2,7 +2,7 @@ package de.nitrox.simpleEssentials.modules;
 
 import de.nitrox.simpleEssentials.SimpleEssentials;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.PlayerArgument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import org.bukkit.entity.Player;
 
 public class FlyCommand {
@@ -16,7 +16,7 @@ public class FlyCommand {
     public void registerFlyCommands() {
         
         new CommandAPICommand("fly")
-                .withArguments(new PlayerArgument("player"))
+                .withArguments(new EntitySelectorArgument.OnePlayer("player"))
                 .withPermission("simpleessentials.fly.others")
                 .executes((sender, args) -> {
                     String modeStr = (String) args.get("mode");

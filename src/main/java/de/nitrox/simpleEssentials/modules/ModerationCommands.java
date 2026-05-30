@@ -281,7 +281,7 @@ public class ModerationCommands {
         
         // Temporary Mute Command
         new CommandAPICommand("tempmute")
-                .withArguments(new PlayerArgument("player"))
+                .withArguments(new EntitySelectorArgument.OnePlayer("player"))
                 .withArguments(new StringArgument("time"))
                 .withArguments(new GreedyStringArgument("reason"))
                 .withPermission("simpleessentials.tempmute")
@@ -334,7 +334,7 @@ public class ModerationCommands {
         
         // Mute Command with reason only
         new CommandAPICommand("mute")
-                .withArguments(new PlayerArgument("player"))
+                .withArguments(new EntitySelectorArgument.OnePlayer("player"))
                 .withArguments(new GreedyStringArgument("reason"))
                 .withPermission("simpleessentials.mute")
                 .executes((sender, args) -> {
@@ -369,7 +369,7 @@ public class ModerationCommands {
         
         // Mute Command without reason
         new CommandAPICommand("mute")
-                .withArguments(new PlayerArgument("player"))
+                .withArguments(new EntitySelectorArgument.OnePlayer("player"))
                 .withPermission("simpleessentials.mute")
                 .executes((sender, args) -> {
                     Player target = (Player) args.get("player");
@@ -410,7 +410,7 @@ public class ModerationCommands {
                     sender.sendMessage(plugin.getMessage("banlist.header"));
                     
                     // Show active bans
-                    org.bukkit.BanList banList = Bukkit.getBanList(org.bukkit.BanList.Type.NAME);
+                    org.bukkit.BanList<org.bukkit.BanEntry> banList = Bukkit.getBanList(org.bukkit.BanList.Type.NAME);
                     sender.sendMessage(plugin.getMessage("banlist.bans_header"));
                     
                     if (banList.getBanEntries().isEmpty()) {
@@ -532,7 +532,7 @@ public class ModerationCommands {
                     
                     plugin.debug("Unban command executed: target=" + playerName + ", reason=" + reason + ", sender=" + sender.getName());
                     
-                    org.bukkit.BanList banList = Bukkit.getBanList(org.bukkit.BanList.Type.NAME);
+                    org.bukkit.BanList<org.bukkit.BanEntry> banList = Bukkit.getBanList(org.bukkit.BanList.Type.NAME);
                     org.bukkit.BanEntry banEntry = banList.getBanEntry(playerName);
                     
                     if (banEntry == null) {
@@ -575,7 +575,7 @@ public class ModerationCommands {
                     
                     plugin.debug("Unban command executed: target=" + playerName + ", reason=" + reason + ", sender=" + sender.getName());
                     
-                    org.bukkit.BanList banList = Bukkit.getBanList(org.bukkit.BanList.Type.NAME);
+                    org.bukkit.BanList<org.bukkit.BanEntry> banList = Bukkit.getBanList(org.bukkit.BanList.Type.NAME);
                     org.bukkit.BanEntry banEntry = banList.getBanEntry(playerName);
                     
                     if (banEntry == null) {
@@ -605,7 +605,7 @@ public class ModerationCommands {
         
         // Unmute Command
         new CommandAPICommand("unmute")
-                .withArguments(new PlayerArgument("player"))
+                .withArguments(new EntitySelectorArgument.OnePlayer("player"))
                 .withArguments(new GreedyStringArgument("reason"))
                 .withPermission("simpleessentials.unmute")
                 .executes((sender, args) -> {
@@ -647,7 +647,7 @@ public class ModerationCommands {
         
         // Unmute Command without reason
         new CommandAPICommand("unmute")
-                .withArguments(new PlayerArgument("player"))
+                .withArguments(new EntitySelectorArgument.OnePlayer("player"))
                 .withPermission("simpleessentials.unmute")
                 .executes((sender, args) -> {
                     Player target = (Player) args.get("player");

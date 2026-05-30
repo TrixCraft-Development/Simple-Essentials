@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.PlayerArgument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 
 public class DeathLogCommand implements Listener {
 
@@ -73,7 +73,7 @@ public class DeathLogCommand implements Listener {
         // /deathlog [player] command
         new CommandAPICommand("deathlog")
                 .withPermission("simpleessentials.deathlog")
-                .withArguments(new PlayerArgument("target").setOptional(true))
+                .withArguments(new EntitySelectorArgument.OnePlayer("target").setOptional(true))
                 .executes((sender, args) -> {
                     Player target = null;
 

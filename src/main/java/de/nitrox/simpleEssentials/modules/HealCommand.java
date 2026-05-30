@@ -2,7 +2,7 @@ package de.nitrox.simpleEssentials.modules;
 
 import de.nitrox.simpleEssentials.SimpleEssentials;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.PlayerArgument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import org.bukkit.entity.Player;
 
 public class HealCommand {
@@ -16,7 +16,7 @@ public class HealCommand {
     public void registerHealCommands() {
         
         new CommandAPICommand("heal")
-                .withArguments(new PlayerArgument("player"))
+                .withArguments(new EntitySelectorArgument.OnePlayer("player"))
                 .withPermission("simpleessentials.heal.others")
                 .executes((sender, args) -> {
                     Player target = (Player) args.get("player");

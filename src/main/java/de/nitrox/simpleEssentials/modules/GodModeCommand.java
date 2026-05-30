@@ -2,7 +2,7 @@ package de.nitrox.simpleEssentials.modules;
 
 import de.nitrox.simpleEssentials.SimpleEssentials;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.PlayerArgument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -24,7 +24,7 @@ public class GodModeCommand {
         
         new CommandAPICommand("godmode")
                 .withAliases("god")
-                .withArguments(new PlayerArgument("player"))
+                .withArguments(new EntitySelectorArgument.OnePlayer("player"))
                 .withPermission("simpleessentials.godmode.others")
                 .executes((sender, args) -> {
                     String modeStr = (String) args.get("mode");

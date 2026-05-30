@@ -2,7 +2,7 @@ package de.nitrox.simpleEssentials.modules;
 
 import de.nitrox.simpleEssentials.SimpleEssentials;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.PlayerArgument;
+import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -20,7 +20,7 @@ public class GamemodeCommands {
         new CommandAPICommand("gamemode")
                 .withAliases("gm")
                 .withArguments(new StringArgument("mode"))
-                .withArguments(new PlayerArgument("player"))
+                .withArguments(new EntitySelectorArgument.OnePlayer("player"))
                 .withPermission("simpleessentials.gamemode.others")
                 .executes((sender, args) -> {
                     String modeStr = (String) args.get("mode");
