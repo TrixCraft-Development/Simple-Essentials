@@ -15,10 +15,9 @@ import java.util.List;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.StringArgument;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 
 public class HomesCommand {
     
@@ -32,9 +31,6 @@ public class HomesCommand {
         setupHomesFile();
     }
     
-    /**
-     * Sets up the homes configuration file
-     */
     private void setupHomesFile() {
         homesFile = new File(plugin.getDataFolder(), "homes.yml");
         if (!homesFile.exists()) {
@@ -43,9 +39,6 @@ public class HomesCommand {
         homesConfig = YamlConfiguration.loadConfiguration(homesFile);
     }
     
-    /**
-     * Reloads the homes configuration
-     */
     public void reloadHomesConfig() {
         if (homesFile == null) {
             homesFile = new File(plugin.getDataFolder(), "homes.yml");
@@ -53,9 +46,6 @@ public class HomesCommand {
         homesConfig = YamlConfiguration.loadConfiguration(homesFile);
     }
     
-    /**
-     * Saves the homes configuration
-     */
     private void saveHomesConfig() {
         try {
             homesConfig.save(homesFile);
@@ -64,9 +54,6 @@ public class HomesCommand {
         }
     }
     
-    /**
-     * Registers the homes commands
-     */
     public void registerHomesCommands() {
         // /sethome [name] command
         new CommandAPICommand("sethome")
@@ -107,9 +94,6 @@ public class HomesCommand {
             .register();
     }
     
-    /**
-     * Sets a home for the player
-     */
     private void setHome(CommandSender sender, String homeName) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(plugin.getMessage("homes.player_only"));
@@ -118,7 +102,6 @@ public class HomesCommand {
         
         Player player = (Player) sender;
         
-        // Check if home name is valid
         if (homeName == null || homeName.trim().isEmpty()) {
             player.sendMessage(plugin.getMessage("homes.invalid_name"));
             return;
@@ -126,7 +109,6 @@ public class HomesCommand {
         
         homeName = homeName.toLowerCase().trim();
         
-        // Check home limit
         if (!canSetHome(player, homeName)) {
             int maxHomes = getMaxHomes(player);
             player.sendMessage(plugin.getMessage("homes.limit_reached")
@@ -134,7 +116,6 @@ public class HomesCommand {
             return;
         }
         
-        // Set the home
         Location location = player.getLocation();
         String playerPath = "homes." + player.getUniqueId().toString() + "." + homeName;
         
@@ -152,9 +133,6 @@ public class HomesCommand {
                 .replace("{name}", homeName));
     }
     
-    /**
-     * Teleports player to their home
-     */
     private void goHome(CommandSender sender, String homeName) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(plugin.getMessage("homes.player_only"));
@@ -172,7 +150,6 @@ public class HomesCommand {
             return;
         }
         
-        // Load home location
         String worldName = homesConfig.getString(playerPath + ".world");
         double x = homesConfig.getDouble(playerPath + ".x");
         double y = homesConfig.getDouble(playerPath + ".y");
@@ -180,7 +157,6 @@ public class HomesCommand {
         float yaw = (float) homesConfig.getDouble(playerPath + ".yaw");
         float pitch = (float) homesConfig.getDouble(playerPath + ".pitch");
         
-        // Create location (check if world exists)
         if (plugin.getServer().getWorld(worldName) == null) {
             player.sendMessage(plugin.getMessage("homes.world_not_found")
                     .replace("{world}", worldName));
@@ -189,15 +165,11 @@ public class HomesCommand {
         
         Location homeLocation = new Location(plugin.getServer().getWorld(worldName), x, y, z, yaw, pitch);
         
-        // Teleport player
         player.teleport(homeLocation);
         player.sendMessage(plugin.getMessage("homes.teleport_success")
                 .replace("{name}", homeName));
     }
     
-    /**
-     * Lists all homes for the player with clickable teleportation
-     */
     private void listHomes(CommandSender sender) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(plugin.getMessage("homes.player_only"));
@@ -212,14 +184,12 @@ public class HomesCommand {
             return;
         }
         
-        // Get all homes for this player
         Set<String> homeNames = homesConfig.getConfigurationSection(playerPath).getKeys(false);
         
         player.sendMessage(plugin.getMessage("homes.list_header")
                 .replace("{count}", String.valueOf(homeNames.size()))
                 .replace("{limit}", String.valueOf(getMaxHomes(player))));
         
-        // Sort homes by creation date (newest first)
         List<Map.Entry<String, Long>> sortedHomes = new ArrayList<>();
         for (String homeName : homeNames) {
             long created = homesConfig.getLong(playerPath + "." + homeName + ".created", 0);
@@ -227,7 +197,6 @@ public class HomesCommand {
         }
         sortedHomes.sort((a, b) -> Long.compare(b.getValue(), a.getValue()));
         
-        // Display each home with clickable teleport
         for (Map.Entry<String, Long> entry : sortedHomes) {
             String homeName = entry.getKey();
             long created = entry.getValue();
@@ -238,10 +207,8 @@ public class HomesCommand {
             double y = homesConfig.getDouble(homePath + ".y");
             double z = homesConfig.getDouble(homePath + ".z");
             
-            // Format creation date
             String createdDate = dateFormat.format(new Date(created));
             
-            // Create clickable home entry
             String fullMessage = plugin.getMessage("homes.list_entry")
                     .replace("{name}", homeName)
                     .replace("{world}", worldName)
@@ -252,19 +219,18 @@ public class HomesCommand {
 
             int startIndex = fullMessage.indexOf(homeName);
             if (startIndex != -1) {
-                TextComponent clickableName = new TextComponent(homeName);
-                clickableName.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/home " + homeName));
-                clickableName.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
-                    new ComponentBuilder(plugin.getMessage("homes.click_tooltip").replace("{name}", homeName)).create()));
-
                 String before = fullMessage.substring(0, startIndex);
                 String after = fullMessage.substring(startIndex + homeName.length());
                 
-                TextComponent fullComponent = new TextComponent(before);
-                fullComponent.addExtra(clickableName);
-                fullComponent.addExtra(after);
+                Component component = Component.text(before)
+                        .append(Component.text(homeName)
+                                .clickEvent(ClickEvent.runCommand("/home " + homeName))
+                                .hoverEvent(HoverEvent.showText(
+                                        Component.text(plugin.getMessage("homes.click_tooltip").replace("{name}", homeName))
+                                )))
+                        .append(Component.text(after));
                 
-                player.spigot().sendMessage(fullComponent);
+                player.sendMessage(component);
             } else {
                 player.sendMessage(fullMessage);
             }
@@ -273,9 +239,6 @@ public class HomesCommand {
         player.sendMessage(plugin.getMessage("homes.list_footer"));
     }
     
-    /**
-     * Deletes a home
-     */
     private void deleteHome(CommandSender sender, String homeName) {
         if (!(sender instanceof Player)) {
             sender.sendMessage(plugin.getMessage("homes.player_only"));
@@ -293,7 +256,6 @@ public class HomesCommand {
             return;
         }
         
-        // Delete the home
         homesConfig.set("homes." + player.getUniqueId().toString() + "." + homeName, null);
         saveHomesConfig();
         
@@ -301,9 +263,6 @@ public class HomesCommand {
                 .replace("{name}", homeName));
     }
     
-    /**
-     * Checks if a player can set another home
-     */
     private boolean canSetHome(Player player, String homeName) {
         String playerPath = "homes." + player.getUniqueId().toString();
         int currentHomes = 0;
@@ -312,7 +271,6 @@ public class HomesCommand {
             currentHomes = homesConfig.getConfigurationSection(playerPath).getKeys(false).size();
         }
         
-        // If home already exists, allow updating it
         if (homesConfig.contains(playerPath + "." + homeName)) {
             return true;
         }
@@ -321,18 +279,13 @@ public class HomesCommand {
         return currentHomes < maxHomes;
     }
     
-    /**
-     * Gets the maximum number of homes a player can have
-     */
     private int getMaxHomes(Player player) {
-        // Check for permission-based limits first
         for (int i = 100; i >= 1; i--) {
             if (player.hasPermission("simpleessentials.homes.bypass." + i)) {
                 return i;
             }
         }
         
-        // Fall back to config default
         return plugin.getConfig().getInt("homes.default_limit", 5);
     }
 }

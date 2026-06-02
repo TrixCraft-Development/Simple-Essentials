@@ -41,6 +41,16 @@ messages:
     enabled: "&aFlight enabled!"
     disabled: "&cFlight disabled!"
     toggled_other: "&aToggled flight for {player}"
+  flyspeed:
+    set: "&aYour flight speed has been set to {speed}"
+    invalid: "&cInvalid flight speed! Range: -1 to 1"
+    get: "&aYour current fly speed is {speed}"
+    reset: "&aYour flight speed has been reset to default"
+  walkingspeed:
+    set: "&aYour walking speed has been set to {speed}"
+    invalid: "&cInvalid walking speed! Range: -1 to 1"
+    get: "&aYour current walking speed is {speed}"
+    reset: "&aYour walking speed has been reset to default"
   heal:
     healed: "&aYou have been healed!"
     healed_other: "&aHealed {player}"
@@ -82,6 +92,8 @@ messages:
     autovanish_enabled: "&aAuto-vanish enabled! You will join vanished on your next login."
     autovanish_disabled: "&cAuto-vanish disabled! You will join normally on your next login."
     autovanish_no_permission: "&cYou don't have permission to use auto-vanish!"
+  broadcast:
+    message: "{message}"
   warp:
     player_only: "&cThis command can only be used by players!"
     set:
@@ -89,7 +101,7 @@ messages:
       name_too_long: "&cWarp name cannot be longer than 20 characters!"
       invalid_characters: "&cWarp name cannot contain spaces, dots, or slashes!"
       already_exists: "&cWarp '&e{warp}&c' already exists!"
-      success: "&aWarp '&e{warp}&a' created at {world} ({x}, {y}, {z})!"
+      success: "&aWarp '&e{warp}&a' created at {world} &7({x}, {y}, {z})&a!"
     delete:
       not_found: "&cWarp '{warp}' not found!"
       success: "&aWarp '{warp}' has been deleted!"
@@ -97,7 +109,8 @@ messages:
     no_permission: "&cYou don't have permission to use warp '{warp}'!"
     world_not_found: "&cWorld '{world}' not found!"
     teleport:
-      success: "&aTeleported to warp '{warp}' in {world} ({x}, {y}, {z})!"
+      success: "&aTeleported to warp '{warp}' in {world} &7({x}, {y}, {z})&a!"
+      cancelled: "&cTeleport to warp '{warp}' was cancelled!"
     list:
       header: "&6=== Available Warps ==="
       empty: "&7No warps have been created yet!"
@@ -193,6 +206,8 @@ messages:
     info_total: "&7Total Deaths: &e{count}"
     inventory_title: "Death Inventory - {player} ({id})"
     inventory_not_found: "&cDeath inventory not found!"
+  staff_join_notification: "&f{player} &ehas joined the Server &7({world})"
+  staff_leave_notification: "&f{player} &ehas left the Server &7({world})"
   spawn:
     player_only: "&cThis command can only be used by players!"
     not_set: "&cSpawn has not been set yet!"
@@ -278,10 +293,13 @@ messages:
 
 settings:
   debug: false
+  disable_joinMessage: false
+  notify_staff_on_join: false
 
 # Spawn Settings
 spawn:
   enforce-spawn-on-join: false
+  enforce-spawn-on-death: false
   broadcast_setspawn: false
   send_message_on_teleport: true
   location:

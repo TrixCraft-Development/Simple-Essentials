@@ -151,8 +151,8 @@ public class AutoBroadcastCommand {
         message = message.replace("{month}", String.format("%02d", now.getMonthValue()));
         message = message.replace("{year}", String.valueOf(now.getYear()));
         
-        // Color codes
-        message = org.bukkit.ChatColor.translateAlternateColorCodes('&', message);
+        // Parse legacy & codes and MiniMessage tags
+        message = plugin.legacyAmpersandToSection(message);
         
         return message;
     }

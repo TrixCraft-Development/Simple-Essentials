@@ -20,9 +20,15 @@ import de.nitrox.simpleEssentials.modules.WarpCommands;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIPaperConfig;
 import dev.jorel.commandapi.CommandAPICommand;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class SimpleEssentials extends JavaPlugin {
 
@@ -55,6 +61,9 @@ public final class SimpleEssentials extends JavaPlugin {
         banlogManager = new BanlogManager(this);
         
         getLogger().info("SimpleEssentials enabled!");
+
+        // Register join/leave listener
+        Bukkit.getPluginManager().registerEvents(new JoinLeaveListener(this), this);
 
         // Register chat listener for mute functionality
         Bukkit.getPluginManager().registerEvents(new ChatListener(this), this);
@@ -132,8 +141,8 @@ public final class SimpleEssentials extends JavaPlugin {
         new CommandAPICommand("simpleessentials")
                 .withAliases("se")
                 .executes((sender, args) -> {
-                    sender.sendMessage(ChatColor.GREEN + "=== " + ChatColor.GRAY +"SimpleEssentials Commands" + ChatColor.GREEN + " ===");
-                    sender.sendMessage(ChatColor.GRAY + "/se reload");
+                    sender.sendMessage(Component.text("=== SimpleEssentials Commands ===", NamedTextColor.GREEN));
+                    sender.sendMessage(Component.text("/se reload", NamedTextColor.GRAY));
                 })
 
                 .withSubcommand(
@@ -143,10 +152,10 @@ public final class SimpleEssentials extends JavaPlugin {
                                     reloadConfig();
                                     autoBroadcastCommand.reloadAutoBroadcast();
                                     serverListModule.reload();
-                                    sender.sendMessage(ChatColor.GREEN + "SimpleEssentials configuration reloaded!");
+                                    sender.sendMessage(Component.text("SimpleEssentials configuration reloaded!", NamedTextColor.GREEN));
                                     
                                     if (getConfig().getBoolean("settings.debug", false)) {
-                                        sender.sendMessage(ChatColor.YELLOW + "Debug mode is enabled!");
+                                        sender.sendMessage(Component.text("Debug mode is enabled!", NamedTextColor.YELLOW));
                                         getLogger().info("Configuration reloaded by " + sender.getName());
                                     }
                                 })
@@ -165,7 +174,7 @@ public final class SimpleEssentials extends JavaPlugin {
     }
     
     public String getMessage(String path) {
-        String prefix = getConfig().getString("messages.prefix", "&6[SimpleEssentials] ").replace("&", "§");
+        String prefix = getConfig().getString("messages.prefix", "&6[SimpleEssentials] ");
         String fullPath = "messages." + path;
         if (!getConfig().contains(fullPath)) {
             if (isDebugMode()) {
@@ -174,8 +183,47 @@ public final class SimpleEssentials extends JavaPlugin {
                 getLogger().warning("Missing message config key: " + fullPath);
             }
         }
-        String message = getConfig().getString(fullPath, "").replace("&", "§");
-        return prefix + message;
+        String message = getConfig().getString(fullPath, "");
+        return legacyAmpersandToSection(prefix + message);
+    }
+
+    public String legacyAmpersandToSection(String text) {
+        String withMiniMessage = legacyAmpersandToMiniMessage(text);
+        try {
+            Component component = MINIMESSAGE.deserialize(withMiniMessage);
+            return LegacyComponentSerializer.legacySection().serialize(component);
+        } catch (Exception e) {
+            return text.replace("&", "§");
+        }
+    }
+
+    private static final Pattern AMPERSAND_CODE = Pattern.compile("&([0-9a-fklmnor])");
+    private static final Pattern HEX_CODE = Pattern.compile("&#([A-Fa-f0-9]{6})");
+    private static final MiniMessage MINIMESSAGE = MiniMessage.miniMessage();
+
+    private static String legacyAmpersandToMiniMessage(String text) {
+        text = HEX_CODE.matcher(text).replaceAll(mr -> "<color:#" + mr.group(1) + ">");
+        StringBuffer sb = new StringBuffer();
+        Matcher m = AMPERSAND_CODE.matcher(text);
+        while (m.find()) {
+            String tag = switch (m.group(1).charAt(0)) {
+                case '0' -> "black"; case '1' -> "dark_blue"; case '2' -> "dark_green";
+                case '3' -> "dark_aqua"; case '4' -> "dark_red"; case '5' -> "dark_purple";
+                case '6' -> "gold"; case '7' -> "gray"; case '8' -> "dark_gray";
+                case '9' -> "blue"; case 'a' -> "green"; case 'b' -> "aqua";
+                case 'c' -> "red"; case 'd' -> "light_purple"; case 'e' -> "yellow";
+                case 'f' -> "white"; case 'k' -> "obfuscated"; case 'l' -> "bold";
+                case 'm' -> "strikethrough"; case 'n' -> "underlined"; case 'o' -> "italic";
+                case 'r' -> "reset";
+                default -> null;
+            };
+            if (tag != null) {
+                String repl = tag.equals("reset") ? "</reset>" : "<" + tag + ">";
+                m.appendReplacement(sb, Matcher.quoteReplacement(repl));
+            }
+        }
+        m.appendTail(sb);
+        return sb.toString();
     }
 
     @Override
@@ -183,6 +231,11 @@ public final class SimpleEssentials extends JavaPlugin {
         // Stop auto broadcast
         if (autoBroadcastCommand != null) {
             autoBroadcastCommand.stopAutoBroadcast();
+        }
+        
+        // Stop vanish action bar
+        if (vanishCommand != null) {
+            vanishCommand.stopActionBarTask();
         }
         
         CommandAPI.onDisable();

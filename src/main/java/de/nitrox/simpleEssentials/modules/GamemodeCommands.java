@@ -2,6 +2,7 @@ package de.nitrox.simpleEssentials.modules;
 
 import de.nitrox.simpleEssentials.SimpleEssentials;
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import org.bukkit.GameMode;
@@ -19,7 +20,7 @@ public class GamemodeCommands {
 
         new CommandAPICommand("gamemode")
                 .withAliases("gm")
-                .withArguments(new StringArgument("mode"))
+                .withArguments(new StringArgument("mode").replaceSuggestions(ArgumentSuggestions.strings("survival", "creative", "adventure", "spectator")))
                 .withArguments(new EntitySelectorArgument.OnePlayer("player"))
                 .withPermission("simpleessentials.gamemode.others")
                 .executes((sender, args) -> {

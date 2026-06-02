@@ -26,6 +26,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+
 public class VanishCommand implements Listener {
     
     private final SimpleEssentials plugin;
@@ -33,11 +36,17 @@ public class VanishCommand implements Listener {
     private final Set<UUID> autoVanishPlayers = ConcurrentHashMap.newKeySet();
     private File autoVanishFile;
     private FileConfiguration autoVanishConfig;
+    private final Component vanishActionBar;
+    private int actionBarTaskId = -1;
     
     public VanishCommand(SimpleEssentials plugin) {
         this.plugin = plugin;
+        this.vanishActionBar = MiniMessage.miniMessage().deserialize(
+            "<white>YOU ARE CURRENTLY</white> <red>VANISHED</red>"
+        );
         setupAutoVanishConfig();
         loadAutoVanishPlayers();
+        startActionBarTask();
     }
     
     public void registerVanishCommands() {
@@ -70,6 +79,24 @@ public class VanishCommand implements Listener {
                 .register();
     }
     
+    private void startActionBarTask() {
+        actionBarTaskId = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for (UUID id : vanishedPlayers) {
+                Player p = Bukkit.getPlayer(id);
+                if (p != null && p.isOnline()) {
+                    p.sendActionBar(vanishActionBar);
+                }
+            }
+        }, 0L, 40L).getTaskId();
+    }
+
+    public void stopActionBarTask() {
+        if (actionBarTaskId != -1) {
+            Bukkit.getScheduler().cancelTask(actionBarTaskId);
+            actionBarTaskId = -1;
+        }
+    }
+
     /**
      * Toggles auto-vanish for a player
      */

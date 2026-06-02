@@ -163,9 +163,9 @@ public class ServerListModule implements Listener {
         String motdLine1 = plugin.getConfig().getString("serverlist.motd.line1", "&6Welcome to our Server!");
         String motdLine2 = plugin.getConfig().getString("serverlist.motd.line2", "&7A Minecraft Server");
         
-        // Combine lines and translate color codes
+        // Combine lines and parse MiniMessage/legacy codes
         String fullMotd = motdLine1 + "\n" + motdLine2;
-        fullMotd = org.bukkit.ChatColor.translateAlternateColorCodes('&', fullMotd);
+        fullMotd = plugin.legacyAmpersandToSection(fullMotd);
         
         event.setMotd(fullMotd);
         

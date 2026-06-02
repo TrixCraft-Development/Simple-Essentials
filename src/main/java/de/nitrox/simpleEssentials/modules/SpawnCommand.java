@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class SpawnCommand implements Listener {
     
@@ -159,5 +160,21 @@ public class SpawnCommand implements Listener {
                 }
             }
         }, 20L);
+    }
+
+    /**
+     * Teleports players to spawn on death/respawn
+     */
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        if (!plugin.getConfig().getBoolean("spawn.enforce-spawn-on-death", true)) {
+            return;
+        }
+
+        Location spawnLocation = getSpawnLocation();
+        if (spawnLocation == null) {
+            return;
+        }
+        event.setRespawnLocation(spawnLocation);
     }
 }

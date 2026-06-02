@@ -2,6 +2,9 @@ package de.nitrox.simpleEssentials.modules;
 
 import de.nitrox.simpleEssentials.SimpleEssentials;
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
+import dev.jorel.commandapi.arguments.GreedyStringArgument;
+import dev.jorel.commandapi.arguments.StringArgument;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
@@ -9,13 +12,13 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 
 public class SimpleCommands implements Listener {
-    
+
     private final SimpleEssentials plugin;
-    
+
     public SimpleCommands(SimpleEssentials plugin) {
         this.plugin = plugin;
     }
-    
+
     public void registerSimpleCommands() {
         new CommandAPICommand("workbench")
                 .withAliases("wb", "crafting")
@@ -208,5 +211,69 @@ public class SimpleCommands implements Listener {
                     player.sendMessage(plugin.getMessage("simplecommands.enderchest_opened"));
                 })
                 .register();
+
+        new CommandAPICommand("broadcast")
+                .withAliases("bc")
+                .withPermission("simpleessentials.broadcast")
+                .withArguments(new GreedyStringArgument("message"))
+                .executes((sender, args) -> {
+                    String message = (String) args.get("message");
+                    String prefix = plugin.getConfig().getString("messages.prefix", "&6[SimpleEssentials] ");
+                    String formatted = plugin.legacyAmpersandToSection(prefix + message);
+
+                    plugin.debug("Broadcast command executed by: " + sender.getName() + " - message: " + message);
+                    Bukkit.broadcastMessage(formatted);
+                })
+                .register();
+
+        new CommandAPICommand("walkingspeed")
+                .withArguments(new StringArgument("speed").replaceSuggestions(ArgumentSuggestions.strings("reset", "-1", "-0.5", "0.5", "1")))
+                .withPermission("simpleessentials.walkingspeed")
+                .executesPlayer((player, args) -> {
+                    String speedStr = (String) args.get("speed");
+
+                    if (speedStr.equalsIgnoreCase("reset")) {
+                        player.setWalkSpeed(0.2f);
+                        player.sendMessage(plugin.getMessage("walkingspeed.reset"));
+                        plugin.debug("Walkingspeed reset for " + player.getName());
+                        return;
+                    }
+
+                    double speed;
+                    try {
+                        speed = Double.parseDouble(speedStr);
+                    } catch (NumberFormatException e) {
+                        player.sendMessage(plugin.getMessage("walkingspeed.invalid"));
+                        return;
+                    }
+
+                    if (speed < -1 || speed > 1) {
+                        player.sendMessage(plugin.getMessage("walkingspeed.invalid"));
+                        return;
+                    }
+
+                    player.setWalkSpeed((float) speed);
+
+                    player.sendMessage(plugin.getMessage("walkingspeed.set").replace("{speed}", speedStr));
+
+                    plugin.debug("Walkingspeed command executed: " + "sender=" + player.getName() + ", speed=" + speedStr);
+                })
+                .register();
+
+        new CommandAPICommand("walkingspeed")
+                .withPermission("simpleessentials.walkingspeed")
+                .executes((sender, args) -> {
+
+                    Player player = (Player) sender;
+
+                    player.getWalkSpeed();
+
+                    player.sendMessage(plugin.getMessage("walkingspeed.get").replace("{speed}", String.valueOf(player.getWalkSpeed())));
+
+                    plugin.debug("Walkingspeed Get command executed: " + "sender=" + player.getName());
+
+                })
+                .register();
+
     }
 }

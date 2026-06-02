@@ -4,10 +4,10 @@ import de.nitrox.simpleEssentials.SimpleEssentials;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.StringArgument;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -30,9 +30,6 @@ public class WarpCommands {
         setupWarpFile();
     }
     
-    /**
-     * Sets up the warps.yml file
-     */
     private void setupWarpFile() {
         warpFile = new File(plugin.getDataFolder(), "warps.yml");
         if (!warpFile.exists()) {
@@ -41,9 +38,6 @@ public class WarpCommands {
         warpConfig = YamlConfiguration.loadConfiguration(warpFile);
     }
     
-    /**
-     * Saves the warps.yml file
-     */
     private void saveWarpsFile() {
         try {
             warpConfig.save(warpFile);
@@ -52,16 +46,10 @@ public class WarpCommands {
         }
     }
     
-    /**
-     * Reloads the warps.yml file
-     */
     private void reloadWarpsFile() {
         warpConfig = YamlConfiguration.loadConfiguration(warpFile);
     }
     
-    /**
-     * Registers all warp commands
-     */
     public void registerWarpCommands() {
         
         // SetWarp Command
@@ -79,7 +67,6 @@ public class WarpCommands {
                     
                     plugin.debug("SetWarp command executed: warp=" + warpName + ", player=" + player.getName());
                     
-                    // Validate warp name
                     if (warpName.isEmpty()) {
                         player.sendMessage(plugin.getMessage("warp.set.name_empty"));
                         return;
@@ -95,13 +82,11 @@ public class WarpCommands {
                         return;
                     }
                     
-                    // Check if warp already exists
                     if (warpConfig.contains("warps." + warpName)) {
                         player.sendMessage(plugin.getMessage("warp.set.already_exists").replace("{warp}", warpName));
                         return;
                     }
                     
-                    // Create warp
                     Location loc = player.getLocation();
                     String path = "warps." + warpName;
                     
@@ -130,7 +115,6 @@ public class WarpCommands {
         // DelWarp Command
         new CommandAPICommand("delwarp")
                 .withArguments(new StringArgument("name").replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    // Return existing warps for tab completion
                     reloadWarpsFile();
                     org.bukkit.configuration.ConfigurationSection warpsSection = warpConfig.getConfigurationSection("warps");
                     if (warpsSection != null) {
@@ -151,13 +135,11 @@ public class WarpCommands {
                     
                     plugin.debug("DelWarp command executed: warp=" + warpName + ", player=" + player.getName());
                     
-                    // Check if warp exists
                     if (!warpConfig.contains("warps." + warpName)) {
                         player.sendMessage(plugin.getMessage("warp.delete.not_found").replace("{warp}", warpName));
                         return;
                     }
                     
-                    // Delete warp
                     warpConfig.set("warps." + warpName, null);
                     saveWarpsFile();
                     
@@ -190,20 +172,17 @@ public class WarpCommands {
                     
                     plugin.debug("Warp command executed: warp=" + warpName + ", player=" + player.getName());
                     
-                    // Check if warp exists
                     if (!warpConfig.contains("warps." + warpName)) {
                         player.sendMessage(plugin.getMessage("warp.not_found").replace("{warp}", warpName));
                         return;
                     }
                     
-                    // Check specific warp permission
                     String warpPermission = "simpleessentials.warp." + warpName.toLowerCase();
                     if (!player.hasPermission(warpPermission)) {
                         player.sendMessage(plugin.getMessage("warp.no_permission").replace("{warp}", warpName));
                         return;
                     }
                     
-                    // Get warp location
                     String path = "warps." + warpName;
                     String worldName = warpConfig.getString(path + ".world");
                     double x = warpConfig.getDouble(path + ".x");
@@ -218,18 +197,19 @@ public class WarpCommands {
                         return;
                     }
                     
-                    // Teleport player
                     Location warpLoc = new Location(world, x, y, z, yaw, pitch);
-                    player.teleport(warpLoc);
-                    
-                    player.sendMessage(plugin.getMessage("warp.teleport.success")
-                            .replace("{warp}", warpName)
-                            .replace("{world}", worldName)
-                            .replace("{x}", String.valueOf(warpLoc.getBlockX()))
-                            .replace("{y}", String.valueOf(warpLoc.getBlockY()))
-                            .replace("{z}", String.valueOf(warpLoc.getBlockZ())));
-                    
-                    plugin.debug("Player " + player.getName() + " teleported to warp: " + warpName);
+                    if (player.teleport(warpLoc)) {
+                        player.sendMessage(plugin.getMessage("warp.teleport.success")
+                                .replace("{warp}", warpName)
+                                .replace("{world}", worldName)
+                                .replace("{x}", String.valueOf(warpLoc.getBlockX()))
+                                .replace("{y}", String.valueOf(warpLoc.getBlockY()))
+                                .replace("{z}", String.valueOf(warpLoc.getBlockZ())));
+                        plugin.debug("Player " + player.getName() + " teleported to warp: " + warpName);
+                    } else {
+                        player.sendMessage(plugin.getMessage("warp.teleport.cancelled").replace("{warp}", warpName));
+                        plugin.debug("Teleport cancelled for " + player.getName() + " to warp: " + warpName);
+                    }
                 })
                 .register();
         
@@ -285,41 +265,25 @@ public class WarpCommands {
                 .register();
     }
     
-    /**
-     * Sends a clickable warp message that teleports the player
-     */
     private void sendClickableWarp(Player player, String warpName, String worldName, String createdBy) {
-        // Get the config message and parse it properly to preserve colors
         String rawMessage = plugin.getMessage("warp.list.entry")
                 .replace("{warp}", "{WARP_PLACEHOLDER}")
                 .replace("{world}", worldName)
                 .replace("{creator}", createdBy);
 
-        // Split by placeholder and reconstruct with clickable warp
         String[] parts = rawMessage.split("\\{WARP_PLACEHOLDER\\}", 2);
         
         if (parts.length == 2) {
-            TextComponent component = new TextComponent();
+            Component component = Component.text(parts[0])
+                    .append(Component.text(warpName, NamedTextColor.WHITE)
+                            .clickEvent(ClickEvent.runCommand("/warp " + warpName))
+                            .hoverEvent(HoverEvent.showText(
+                                    Component.text("§aClick to teleport to " + warpName + "\n§7World: " + worldName + "\n§7Created by: " + createdBy)
+                            )))
+                    .append(Component.text(parts[1]));
             
-            // Add first part with colors
-            TextComponent beforePart = new TextComponent(parts[0]);
-            component.addExtra(beforePart);
-            
-            // Add clickable warp name with white color (from config &f)
-            TextComponent warpComponent = new TextComponent(warpName);
-            warpComponent.setColor(net.md_5.bungee.api.ChatColor.WHITE);
-            warpComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/warp " + warpName));
-            warpComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, 
-                new ComponentBuilder("§aClick to teleport to " + warpName + "\n§7World: " + worldName + "\n§7Created by: " + createdBy).create()));
-            component.addExtra(warpComponent);
-            
-            // Add second part with colors
-            TextComponent afterPart = new TextComponent(parts[1]);
-            component.addExtra(afterPart);
-            
-            player.spigot().sendMessage(component);
+            player.sendMessage(component);
         } else {
-            // Fallback: send the message without click functionality but with colors
             player.sendMessage(rawMessage.replace("{WARP_PLACEHOLDER}", warpName));
         }
     }
