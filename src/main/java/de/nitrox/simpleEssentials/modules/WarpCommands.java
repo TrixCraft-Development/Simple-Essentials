@@ -155,8 +155,9 @@ public class WarpCommands {
                     reloadWarpsFile();
                     org.bukkit.configuration.ConfigurationSection warpsSection = warpConfig.getConfigurationSection("warps");
                     if (warpsSection != null) {
-                        Set<String> warps = warpsSection.getKeys(false);
-                        return warps.toArray(new String[0]);
+                        return warpsSection.getKeys(false).stream()
+                                .filter(warp -> info.sender().hasPermission("simpleessentials.warp." + warp.toLowerCase()))
+                                .toArray(String[]::new);
                     }
                     return new String[0];
                 })))
