@@ -1,5 +1,11 @@
 package de.nitrox.simpleEssentials;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+
 import de.nitrox.simpleEssentials.modules.AutoBroadcastCommand;
 import de.nitrox.simpleEssentials.modules.DeathLogCommand;
 import de.nitrox.simpleEssentials.modules.EnderChestCommand;
@@ -17,18 +23,14 @@ import de.nitrox.simpleEssentials.modules.SpawnCommand;
 import de.nitrox.simpleEssentials.modules.UserInfoCommands;
 import de.nitrox.simpleEssentials.modules.VanishCommand;
 import de.nitrox.simpleEssentials.modules.WarpCommands;
+import de.nitrox.simpleEssentials.modules.WipeCommand;
 import dev.jorel.commandapi.CommandAPI;
-import dev.jorel.commandapi.CommandAPIPaperConfig;
 import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.CommandAPIPaperConfig;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class SimpleEssentials extends JavaPlugin {
 
@@ -116,6 +118,7 @@ public final class SimpleEssentials extends JavaPlugin {
         new GodModeCommand(this).registerGodModeCommands();
         new UserInfoCommands(this, banlogManager).registerUserInfoCommands();
         new ModerationCommands(this, banlogManager).registerModerationCommands();
+        new WipeCommand(this).registerWipeCommand();
         invseeCommand.registerInvseeCommands();
         spawnCommand.registerSpawnCommands();
         simpleCommands.registerSimpleCommands();
