@@ -6,3 +6,167 @@ load: STARTUP
 authors: [ Nitrox_XD ]
 description: Simple Essentials you need for a Minecraft Server
 softdepend: [PlaceholderAPI]
+
+permissions:
+  simpleessentials.reload:
+    description: Allows reloading the plugin configuration
+    default: op
+  simpleessentials.gamemode:
+    description: Allows changing your own gamemode
+    default: op
+  simpleessentials.gamemode.others:
+    description: Allows changing other players' gamemode
+    default: op
+  simpleessentials.fly:
+    description: Allows toggling your own flight
+    default: op
+  simpleessentials.fly.others:
+    description: Allows toggling other players' flight
+    default: op
+  simpleessentials.flyspeed:
+    description: Allows changing your own fly speed
+    default: op
+  simpleessentials.heal:
+    description: Allows healing yourself
+    default: op
+  simpleessentials.heal.others:
+    description: Allows healing other players
+    default: op
+  simpleessentials.godmode:
+    description: Allows toggling your own god mode
+    default: op
+  simpleessentials.godmode.others:
+    description: Allows toggling other players' god mode
+    default: op
+  simpleessentials.sethome:
+    description: Allows setting homes
+    default: op
+  simpleessentials.home:
+    description: Allows teleporting to homes
+    default: op
+  simpleessentials.homes:
+    description: Allows listing your homes
+    default: op
+  simpleessentials.delhome:
+    description: Allows deleting homes
+    default: op
+  simpleessentials.deathlog:
+    description: Allows viewing death logs
+    default: op
+  simpleessentials.custom.enderchest:
+    description: Allows accessing custom enderchests
+    default: op
+  simpleessentials.uuid:
+    description: Allows viewing player UUIDs
+    default: op
+  simpleessentials.firstjoin:
+    description: Allows viewing first join dates
+    default: op
+  simpleessentials.lastjoin:
+    description: Allows viewing last join dates
+    default: op
+  simpleessentials.userinfo:
+    description: Allows viewing detailed user information
+    default: op
+  simpleessentials.workbench:
+    description: Allows opening a workbench
+    default: op
+  simpleessentials.furnace:
+    description: Allows opening a furnace
+    default: op
+  simpleessentials.anvil:
+    description: Allows opening an anvil
+    default: op
+  simpleessentials.enchantingtable:
+    description: Allows opening an enchanting table
+    default: op
+  simpleessentials.brewingstand:
+    description: Allows opening a brewing stand
+    default: op
+  simpleessentials.smithingtable:
+    description: Allows opening a smithing table
+    default: op
+  simpleessentials.grindstone:
+    description: Allows opening a grindstone
+    default: op
+  simpleessentials.stonecutter:
+    description: Allows opening a stonecutter
+    default: op
+  simpleessentials.cartographytable:
+    description: Allows opening a cartography table
+    default: op
+  simpleessentials.loom:
+    description: Allows opening a loom
+    default: op
+  simpleessentials.enderchest:
+    description: Allows opening your enderchest
+    default: op
+  simpleessentials.broadcast:
+    description: Allows broadcasting messages to the server
+    default: op
+  simpleessentials.walkingspeed:
+    description: Allows changing your walking speed
+    default: op
+  simpleessentials.setwarp:
+    description: Allows setting warps
+    default: op
+  simpleessentials.delwarp:
+    description: Allows deleting warps
+    default: op
+  simpleessentials.warp:
+    description: Allows teleporting to warps
+    default: op
+  simpleessentials.warps:
+    description: Allows listing available warps
+    default: op
+  simpleessentials.spawn:
+    description: Allows teleporting to spawn
+    default: op
+  simpleessentials.setspawn:
+    description: Allows setting the spawn location
+    default: op
+  simpleessentials.vanish:
+    description: Allows toggling vanish mode
+    default: op
+  simpleessentials.vanish.autovanish:
+    description: Allows toggling auto-vanish on join
+    default: op
+  simpleessentials.wipe:
+    description: Allows wiping player data
+    default: op
+  simpleessentials.invsee:
+    description: Allows viewing other players' inventories
+    default: op
+  simpleessentials.repair:
+    description: Allows repairing items
+    default: op
+  simpleessentials.kick:
+    description: Allows kicking players
+    default: op
+  simpleessentials.tempban:
+    description: Allows temporarily banning players
+    default: op
+  simpleessentials.ban:
+    description: Allows banning players
+    default: op
+  simpleessentials.tempmute:
+    description: Allows temporarily muting players
+    default: op
+  simpleessentials.mute:
+    description: Allows muting players
+    default: op
+  simpleessentials.banlist:
+    description: Allows viewing the ban/mute list
+    default: op
+  simpleessentials.banlog:
+    description: Allows viewing moderation history
+    default: op
+  simpleessentials.banlog.clear:
+    description: Allows clearing moderation history
+    default: op
+  simpleessentials.unban:
+    description: Allows unbanning players
+    default: op
+  simpleessentials.unmute:
+    description: Allows unmuting players
+    default: op
